@@ -28,4 +28,4 @@ node_modules
 .lock-wscript
 
 # Bower Components
-public/javascripts/libs
+public/javascripts/libs/bower_components
