@@ -1,6 +1,19 @@
+@white: #ffffff;
 @gray: #a4a4a4;
 @blue: #407996;
 @blue-light: #90bdd4;
+
+@font-face {
+	font-family: 'Lato';
+	src: url('../fonts/lato/lato-lig-webfont.eot');
+	src: url('../fonts/lato/lato-lig-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/lato/lato-lig-webfont.woff') format('woff'),
+		 url('../fonts/lato/lato-lig-webfont.ttf') format('truetype'),
+		 url('../fonts/lato/lato-lig-webfont.svg#latolight') format('svg');
+	font-weight: 300;
+	font-style: normal;
+
+}
 
 @font-face {
 	font-family: 'Lato';
@@ -26,6 +39,63 @@
 
 }
 
+* {
+	-webkit-border-radius: 0 !important;
+	-moz-border-radius: 0 !important;
+	border-radius: 0 !important;
+}
+
 body, input, select, textarea{
 	font-family:"Lato", Arial, Helvetica, sans-serif;
+}
+
+body {
+	h1 {
+		font-size: 32px;
+		font-weight: 700;
+		margin-bottom: 130px;
+	}
+
+	table {
+		margin: 0px auto 120px auto;
+
+		.colon {
+			font-size: 56px;
+			font-weight: 300;
+			color: @gray;
+			padding: 20px;
+		}
+
+		input[type='text'] {
+			padding: 20px 45px;
+			border: none;
+			background-color: @blue;
+			color: @white;
+			text-align:center;
+			font-size: 52px;
+			font-weight: 300;
+			line-height: 52px;
+			width: 150px;
+		}	
+	}
+
+	button {
+		background-color: @blue-light;
+		border: none;
+		color: @white;
+		font-size: 16px;
+		line-height: 16px;
+		padding: 10px 12px;
+		margin-right: 12px;
+
+		&:active {
+			outline-color: @blue;
+		}
+	}
+
+	p.copyright {
+		margin-top: 130px;
+		font-size: 14px;
+		color: @gray;
+	}
 }

@@ -19,19 +19,22 @@
 	<body>
 		<div class="container text-center">
 			<h1>timer</h1>
-			<p>
-				<input type="text" value="00" id="hours">
-				:
-				<input type="text" value="20" id="minutes">
-				:
-				<input type="text" value="00" id="seconds">
-			</p>
+			<table>
+				<tr>
+					<td><input type="text" value="00" id="hours"></td>
+					<td class="colon">:</td>
+					<td><input type="text" value="20" id="minutes"></td>
+					<td class="colon">:</td>
+					<td><input type="text" value="00" id="seconds"></td>
+				</tr>
+			</table>
 			<p>
 				<button>start</button>
 				<button>restart</button>
+				<button>snooze</button>
 				<button>stop</button>
 			</p>
-			<p>© 2014 Dominic Liu</p>
+			<p class="copyright">© 2014 Dominic Liu</p>
 		</div>
 	</body>
 </html>
