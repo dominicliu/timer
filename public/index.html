@@ -15,26 +15,35 @@
 		<script src="javascripts/libs/bower_components/less.js/dist/less-1.7.3.min.js"></script>
 
 		<script src="javascripts/libs/countdown.min.js"></script>
+
+		<script src="javascripts/timer.js"></script>
 	</head>
 	<body>
-		<div class="container text-center">
-			<h1>timer</h1>
-			<table>
-				<tr>
-					<td><input type="text" value="00" id="hours"></td>
-					<td class="colon">:</td>
-					<td><input type="text" value="20" id="minutes"></td>
-					<td class="colon">:</td>
-					<td><input type="text" value="00" id="seconds"></td>
-				</tr>
-			</table>
-			<p>
-				<button>start</button>
-				<button>restart</button>
-				<button>snooze</button>
-				<button>stop</button>
-			</p>
-			<p class="copyright">© 2014 Dominic Liu</p>
+		<div class="container">
+			<script type="text/x-handlebars" class="text-center">
+				{{outlet}}
+			</script>
+			<script type="text/x-handlebars" data-template-name="index">
+				<div class="text-center">
+					<h1>timer</h1>
+					<table>
+						<tr>
+							<td><input type="text" value="00" id="hours"></td>
+							<td class="colon">:</td>
+							<td><input type="text" value="20" id="minutes"></td>
+							<td class="colon">:</td>
+							<td><input type="text" value="00" id="seconds"></td>
+						</tr>
+					</table>
+					<p>
+						<button>start</button>
+						<button>restart</button>
+						<button>snooze</button>
+						<button>stop</button>
+					</p>
+					<p class="copyright">© 2014 Dominic Liu</p>
+				</div>
+			</script>
 		</div>
 	</body>
 </html>
