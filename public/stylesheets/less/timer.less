@@ -50,6 +50,15 @@ body, input, select, textarea{
 }
 
 body {
+	::selection {
+		background: @blue-light; /* Safari */
+		color: @white;
+	}
+	::-moz-selection {
+		background: @blue-light; /* Firefox */
+		color: @white;
+	}
+
 	h1 {
 		font-size: 32px;
 		font-weight: 700;
@@ -76,6 +85,10 @@ body {
 			font-weight: 300;
 			line-height: 52px;
 			width: 150px;
+
+			&:focus {
+				outline-color: transparent;
+			}
 		}	
 	}
 
@@ -88,8 +101,8 @@ body {
 		padding: 10px 12px;
 		margin-right: 12px;
 
-		&:active {
-			outline-color: @blue;
+		&:focus {
+			outline-color: transparent;
 		}
 	}
 
