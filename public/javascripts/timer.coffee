@@ -22,10 +22,14 @@ Timer.IndexController = Ember.ObjectController.extend
 				@set "initialMinutes", @get "minutes"
 				@set "initialSeconds", @get "seconds"
 			@set "paused", false
+			that = this
 			timerId = countdown moment().add("hours", @get "hours").add("minutes", @get "minutes").add("seconds", @get "seconds").toDate(), (ts) ->
 				timer.set "hours", ts.hours
 				timer.set "minutes", ts.minutes
 				timer.set "seconds", ts.seconds
+				if ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
+					notify()
+					that.send "stop"
 			, countdown.HOURS|countdown.MINUTES|countdown.SECONDS
 		pause: ->
 			@set "running", false
@@ -51,6 +55,7 @@ Timer.IndexController = Ember.ObjectController.extend
 			else if @get "paused"
 				@incrementProperty "minutes", 5
 			else
+				@send "start"
 				@send "pause"
 				@set "hours", 0
 				@set "minutes", 5
@@ -64,3 +69,34 @@ Timer.IndexController = Ember.ObjectController.extend
 Timer.IndexRoute = Ember.Route.extend
 	model: ->
 		return timer
+
+notify1 = ->
+	# Let's check if the browser supports notifications
+	unless "Notification" of window
+		alert "This browser does not support desktop notification"
+	
+	# Let's check if the user is okay to get some notification
+	else if Notification.permission is "granted"
+		
+		# If it's okay let's create a notification
+		notification = new Notification("Hi there!")
+	
+	# Otherwise, we need to ask the user for permission
+	# Note, Chrome does not implement the permission static property
+	# So we have to check for NOT 'denied' instead of 'default'
+	else if Notification.permission isnt "denied"
+		Notification.requestPermission (permission) ->
+			# Whatever the user answers, we make sure we store the information
+			Notification.permission = permission  unless "permission" of Notification
+			
+			# If the user is okay, let's create a notification
+			notification = new Notification("Hi there!")  if permission is "granted"
+			return
+
+	return
+
+# At last, if the user already denied any notification, and you 
+# want to be respectful there is no need to bother him any more.
+
+notify = ->
+	notify1()

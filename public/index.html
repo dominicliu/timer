@@ -29,11 +29,11 @@
 					<h1>timer</h1>
 					<table>
 						<tr>
-							<td>{{input type="text" value=hours id="hours" disabled=running}}</td>
+							<td>{{input type="text" value=hours id="hours" disabled=running insert-newline="start"}}</td>
 							<td class="colon">:</td>
-							<td>{{input type="text" value=minutes id="minutes" disabled=running}}</td>
+							<td>{{input type="text" value=minutes id="minutes" disabled=running insert-newline="start"}}</td>
 							<td class="colon">:</td>
-							<td>{{input type="text" value=seconds id="seconds" disabled=running}}</td>
+							<td>{{input type="text" value=seconds id="seconds" disabled=running insert-newline="start"}}</td>
 						</tr>
 						<tr>
 							<td class="caption">hours</td>
@@ -54,6 +54,7 @@
 						<button {{action "restart"}}>restart</button>
 						{{/if}}
 						<button {{action "snooze"}}>snooze</button>
+						<button onclick="notify()">Request</button>
 					</p>
 					<p class="copyright">© 2014 Dominic Liu</p>
 				</div>
