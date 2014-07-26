@@ -15,12 +15,13 @@
 		<script src="javascripts/libs/bower_components/less.js/dist/less-1.7.3.min.js"></script>
 
 		<script src="javascripts/libs/countdown.min.js"></script>
+		<script src="javascripts/libs/bower_components/moment/min/moment.min.js"></script>
 
 		<script src="javascripts/timer.js"></script>
 	</head>
 	<body>
 		<div class="container">
-			<script type="text/x-handlebars" class="text-center">
+			<script type="text/x-handlebars">
 				{{outlet}}
 			</script>
 			<script type="text/x-handlebars" data-template-name="index">
@@ -28,18 +29,31 @@
 					<h1>timer</h1>
 					<table>
 						<tr>
-							<td><input type="text" value="00" id="hours"></td>
+							<td>{{input type="text" value=hours id="hours" disabled=running}}</td>
 							<td class="colon">:</td>
-							<td><input type="text" value="20" id="minutes"></td>
+							<td>{{input type="text" value=minutes id="minutes" disabled=running}}</td>
 							<td class="colon">:</td>
-							<td><input type="text" value="00" id="seconds"></td>
+							<td>{{input type="text" value=seconds id="seconds" disabled=running}}</td>
+						</tr>
+						<tr>
+							<td class="caption">hours</td>
+							<td></td>
+							<td class="caption">minutes</td>
+							<td></td>
+							<td class="caption">seconds</td>
 						</tr>
 					</table>
 					<p>
-						<button>start</button>
-						<button>restart</button>
-						<button>snooze</button>
-						<button>stop</button>
+						{{#unless running}}
+						<button {{action "start"}}>start</button>
+						{{else}}
+						<button {{action "pause"}}>pause</button>
+						{{/unless}}
+						{{#if runningOrPaused}}
+						<button {{action "stop"}}>stop</button>
+						<button {{action "restart"}}>restart</button>
+						{{/if}}
+						<button {{action "snooze"}}>snooze</button>
 					</p>
 					<p class="copyright">© 2014 Dominic Liu</p>
 				</div>

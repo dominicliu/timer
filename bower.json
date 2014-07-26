@@ -16,6 +16,7 @@
   "dependencies": {
     "ember": "~1.6.1",
     "bootstrap": "~3.2.0",
-    "less.js": "~1.7.3"
+    "less.js": "~1.7.3",
+    "moment": "~2.7.0"
   }
 }
