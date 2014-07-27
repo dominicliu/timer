@@ -1,5 +1,9 @@
 Timer = Ember.Application.create()
 
+setCookie = (key, value) ->
+	Cookies.set key, value,
+		expires: 2592000
+
 Timer.Timer = Ember.Object.extend
 	initialHours: 0
 	initialMinutes: 20
@@ -49,9 +53,9 @@ Timer.IndexController = Ember.ObjectController.extend
 				@set "initialSeconds", @get "seconds"
 
 				# set cookies
-				Cookies.set "hours", @get "hours"
-				Cookies.set "minutes", @get "minutes"
-				Cookies.set "seconds", @get "seconds"
+				setCookie "hours", @get "hours"
+				setCookie "minutes", @get "minutes"
+				setCookie "seconds", @get "seconds"
 			@set "paused", false
 			that = this
 			timerId = countdown moment().add("hours", @get "hours").add("minutes", @get "minutes").add("seconds", @get "seconds").toDate(), (ts) ->
@@ -109,15 +113,15 @@ Timer.IndexController = Ember.ObjectController.extend
 					if permission is "granted"
 						that.set "notificationGranted", true
 						that.set "notification", true
-						Cookies.set "notification", true
+						setCookie "notification", true
 					else if permission is "denied"
 						that.set "notificationDenied", true
 			else
 				that.set "notification", true
-				Cookies.set "notification", true
+				setCookie "notification", true
 		turnOffNotification: ->
 			@set "notification", false
-			Cookies.set "notification", false
+			setCookie "notification", false
 
 	runningOrPaused: (->
 			return @get("running") || @get("paused")
