@@ -62,7 +62,7 @@ Timer.IndexController = Ember.ObjectController.extend
 						hour: timer.get "hours"
 						minute: timer.get "minutes"
 						second: timer.get "seconds"
-					.format "HH:mm:ss"
+					.format "H:m:s"
 				if ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
 					if that.get "notification"
 						new Notification "Time is up!",
@@ -82,6 +82,7 @@ Timer.IndexController = Ember.ObjectController.extend
 			@set "hours", @get "initialHours"
 			@set "minutes", @get "initialMinutes"
 			@set "seconds", @get "initialSeconds"
+			document.title = "timer"
 		restart: ->
 			@send "stop"
 			@send "start"
