@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>timer</title>
+		<link rel="shortcut icon" href="images/favicon.ico" />
 		
 		<script src="javascripts/libs/bower_components/jquery/dist/jquery.min.js"></script>
 		<script src="javascripts/libs/bower_components/handlebars/handlebars.js"></script>
@@ -16,6 +17,7 @@
 
 		<script src="javascripts/libs/countdown.min.js"></script>
 		<script src="javascripts/libs/bower_components/moment/min/moment.min.js"></script>
+		<script src="javascripts/libs/bower_components/cookies-js/dist/cookies.min.js"></script>
 
 		<script src="javascripts/timer.js"></script>
 	</head>
@@ -45,16 +47,22 @@
 					</table>
 					<p>
 						{{#unless running}}
-						<button {{action "start"}}>start</button>
+							<button {{action "start"}}>start</button>
 						{{else}}
-						<button {{action "pause"}}>pause</button>
+							<button {{action "pause"}}>pause</button>
 						{{/unless}}
 						{{#if runningOrPaused}}
-						<button {{action "stop"}}>stop</button>
-						<button {{action "restart"}}>restart</button>
+							<button {{action "stop"}}>stop</button>
+							<button {{action "restart"}}>restart</button>
 						{{/if}}
 						<button {{action "snooze"}}>snooze</button>
-						<button onclick="notify()">Request</button>
+						{{#unless notificationDenied}}
+							{{#if notification}}
+								<button {{action "turnOffNotification"}}>don&#39;t notify</button>
+							{{else}}
+								<button {{action "turnOnNotification"}}>notify</button>
+							{{/if}}
+						{{/unless}}
 					</p>
 					<p class="copyright">© 2014 Dominic Liu</p>
 				</div>

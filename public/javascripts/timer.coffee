@@ -9,6 +9,9 @@ Timer.Timer = Ember.Object.extend
 	seconds: 0
 	running: false
 	paused: false
+	notificationGranted: false
+	notificationDenied: false
+	notification: false
 
 timer = Timer.Timer.create {}
 timerId = null
@@ -18,9 +21,24 @@ Timer.IndexController = Ember.ObjectController.extend
 		start: ->
 			@set "running", true
 			unless @get "paused"
+				# normalize time
+				time = moment
+					hour: @get "hours"
+					minute: @get "minutes"
+					second: @get "seconds"
+				@set "hours", time.hour()
+				@set "minutes", time.minute()
+				@set "seconds", time.second()
+
+				#set initial settings
 				@set "initialHours", @get "hours"
 				@set "initialMinutes", @get "minutes"
 				@set "initialSeconds", @get "seconds"
+				
+				# set cookies
+				Cookies.set "hours", @get "hours"
+				Cookies.set "minutes", @get "minutes"
+				Cookies.set "seconds", @get "seconds"
 			@set "paused", false
 			that = this
 			timerId = countdown moment().add("hours", @get "hours").add("minutes", @get "minutes").add("seconds", @get "seconds").toDate(), (ts) ->
@@ -28,7 +46,8 @@ Timer.IndexController = Ember.ObjectController.extend
 				timer.set "minutes", ts.minutes
 				timer.set "seconds", ts.seconds
 				if ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
-					notify()
+					if that.get "notification"
+						new Notification "Time is up!"
 					that.send "stop"
 			, countdown.HOURS|countdown.MINUTES|countdown.SECONDS
 		pause: ->
@@ -62,6 +81,24 @@ Timer.IndexController = Ember.ObjectController.extend
 				@set "seconds", 0
 				@send "start"
 
+		turnOnNotification: ->
+			that = this
+			text = "Time is up!"
+			unless that.get "notificationGranted"
+				Notification.requestPermission (permission) ->
+					if permission is "granted"
+						that.set "notificationGranted", true
+						that.set "notification", true
+						Cookies.set "notification", true
+					else if permission is "denied"
+						that.set "notificationDenied", true
+			else
+				that.set "notification", true
+				Cookies.set "notification", true
+		turnOffNotification: ->
+			@set "notification", false
+			Cookies.set "notification", false
+
 	runningOrPaused: (->
 			return @get("running") || @get("paused")
 		).property "model.running", "model.paused"
@@ -69,34 +106,22 @@ Timer.IndexController = Ember.ObjectController.extend
 Timer.IndexRoute = Ember.Route.extend
 	model: ->
 		return timer
-
-notify1 = ->
-	# Let's check if the browser supports notifications
-	unless "Notification" of window
-		alert "This browser does not support desktop notification"
-	
-	# Let's check if the user is okay to get some notification
-	else if Notification.permission is "granted"
-		
-		# If it's okay let's create a notification
-		notification = new Notification("Hi there!")
-	
-	# Otherwise, we need to ask the user for permission
-	# Note, Chrome does not implement the permission static property
-	# So we have to check for NOT 'denied' instead of 'default'
-	else if Notification.permission isnt "denied"
-		Notification.requestPermission (permission) ->
-			# Whatever the user answers, we make sure we store the information
-			Notification.permission = permission  unless "permission" of Notification
-			
-			# If the user is okay, let's create a notification
-			notification = new Notification("Hi there!")  if permission is "granted"
-			return
-
-	return
-
-# At last, if the user already denied any notification, and you 
-# want to be respectful there is no need to bother him any more.
-
-notify = ->
-	notify1()
+	afterModel: (model) ->
+		# retrieve data from cookies
+		if Cookies.get "hours"
+			model.set "hours", Cookies.get "hours"
+		if Cookies.get "minutes"
+			model.set "minutes", Cookies.get "minutes"
+		if Cookies.get "seconds"
+			model.set "seconds", Cookies.get "seconds"
+		if Cookies.get "notification"
+			model.set "notification", Cookies.get("notification") is "true"
+		# check notification permissions
+		unless Notification
+			return model.set "notificationDenied", true
+		permission = Notification.permission
+		switch permission
+			when "granted"
+				model.set "notificationGranted", true
+			when "denied"
+				model.set "notificationDenied", true
