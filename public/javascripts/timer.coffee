@@ -16,6 +16,12 @@ Timer.Timer = Ember.Object.extend
 timer = Timer.Timer.create {}
 timerId = null
 
+window.onbeforeunload = ->
+	if timer.get "running"
+    	return "Your timer is counting down."
+    else
+    	return
+
 Timer.IndexController = Ember.ObjectController.extend
 	actions:
 		start: ->
@@ -34,7 +40,7 @@ Timer.IndexController = Ember.ObjectController.extend
 				@set "initialHours", @get "hours"
 				@set "initialMinutes", @get "minutes"
 				@set "initialSeconds", @get "seconds"
-				
+
 				# set cookies
 				Cookies.set "hours", @get "hours"
 				Cookies.set "minutes", @get "minutes"
@@ -47,7 +53,8 @@ Timer.IndexController = Ember.ObjectController.extend
 				timer.set "seconds", ts.seconds
 				if ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
 					if that.get "notification"
-						new Notification "Time is up!"
+						new Notification "Time is up!",
+							icon: "../images/favicon.ico"
 					that.send "stop"
 			, countdown.HOURS|countdown.MINUTES|countdown.SECONDS
 		pause: ->

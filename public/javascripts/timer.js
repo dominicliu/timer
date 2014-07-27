@@ -21,6 +21,14 @@ timer = Timer.Timer.create({});
 
 timerId = null;
 
+window.onbeforeunload = function() {
+  if (timer.get("running")) {
+    return "Your timer is counting down.";
+  } else {
+
+  }
+};
+
 Timer.IndexController = Ember.ObjectController.extend({
   actions: {
     start: function() {
@@ -50,7 +58,9 @@ Timer.IndexController = Ember.ObjectController.extend({
         timer.set("seconds", ts.seconds);
         if (ts.hours === 0 && ts.minutes === 0 && ts.seconds === 0) {
           if (that.get("notification")) {
-            new Notification("Time is up!");
+            new Notification("Time is up!", {
+              icon: "../images/favicon.ico"
+            });
           }
           return that.send("stop");
         }
