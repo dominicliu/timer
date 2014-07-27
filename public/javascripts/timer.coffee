@@ -23,6 +23,13 @@ window.onbeforeunload = ->
     	return
 
 Timer.IndexController = Ember.ObjectController.extend
+	# secondsDisplay: ((key, value) ->
+	# 		if arguments.length > 1
+	# 			@set "seconds", parseInt value
+	# 		return moment
+	# 				second: @get("seconds")
+	# 			.format "ss"
+	# 	).property "seconds"
 	actions:
 		start: ->
 			@set "running", true
@@ -51,6 +58,11 @@ Timer.IndexController = Ember.ObjectController.extend
 				timer.set "hours", ts.hours
 				timer.set "minutes", ts.minutes
 				timer.set "seconds", ts.seconds
+				document.title = "timer - " + moment
+						hour: timer.get "hours"
+						minute: timer.get "minutes"
+						second: timer.get "seconds"
+					.format "HH:mm:ss"
 				if ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
 					if that.get "notification"
 						new Notification "Time is up!",

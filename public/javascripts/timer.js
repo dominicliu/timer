@@ -56,6 +56,11 @@ Timer.IndexController = Ember.ObjectController.extend({
         timer.set("hours", ts.hours);
         timer.set("minutes", ts.minutes);
         timer.set("seconds", ts.seconds);
+        document.title = "timer - " + moment({
+          hour: timer.get("hours"),
+          minute: timer.get("minutes"),
+          second: timer.get("seconds")
+        }).format("HH:mm:ss");
         if (ts.hours === 0 && ts.minutes === 0 && ts.seconds === 0) {
           if (that.get("notification")) {
             new Notification("Time is up!", {
