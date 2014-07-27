@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "timer",
+  "description": "Countdown timer that reminds you when the time is up.",
+  "version": "1.0.0",
+  "app": {
+    "urls": [
+      "*://timer.initiatorapp.com/"
+    ],
+    "launch": {
+      "web_url": "http://timer.initiatorapp.com/"
+    }
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "permissions": [
+    "notifications"
+  ]
+}
