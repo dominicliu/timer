@@ -170,4 +170,11 @@
     }
   });
 
+  Timer.FocusInputComponent = Ember.TextField.extend({
+    becomeFocused: (function() {
+      this.$().focus();
+      return this.$()[0].selectionStart = this.$()[0].selectionEnd = this.$()[0].value.length;
+    }).on('didInsertElement')
+  });
+
 }).call(this);

@@ -145,3 +145,9 @@ Timer.IndexRoute = Ember.Route.extend
 				model.set "notificationGranted", true
 			when "denied"
 				model.set "notificationDenied", true
+
+Timer.FocusInputComponent = Ember.TextField.extend
+	becomeFocused: (->
+			@$().focus()
+			@$()[0].selectionStart = @$()[0].selectionEnd = @$()[0].value.length # focus at the end
+		).on 'didInsertElement'
