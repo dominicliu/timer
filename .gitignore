@@ -29,3 +29,7 @@ node_modules
 
 # Bower Components
 public/javascripts/libs/bower_components
+
+# Chrome Plugin
+chrome.crx
+chrome.pem
