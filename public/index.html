@@ -19,54 +19,9 @@
 		<script src="javascripts/libs/bower_components/moment/min/moment.min.js"></script>
 		<script src="javascripts/libs/bower_components/cookies-js/dist/cookies.min.js"></script>
 
+		<script src="javascripts/templates.js"></script>
 		<script src="javascripts/timer.js"></script>
 	</head>
 	<body>
-		<div class="container">
-			<script type="text/x-handlebars">
-				{{outlet}}
-			</script>
-			<script type="text/x-handlebars" data-template-name="index">
-				<div class="text-center">
-					<h1>timer</h1>
-					<table>
-						<tr>
-							<td>{{input type="text" value=hours id="hours" disabled=running insert-newline="start"}}</td>
-							<td class="colon">:</td>
-							<td>{{focus-input type="text" value=minutes id="minutes" disabled=running insert-newline="start"}}</td>
-							<td class="colon">:</td>
-							<td>{{input type="text" value=seconds id="seconds" disabled=running insert-newline="start"}}</td>
-						</tr>
-						<tr>
-							<td class="caption">hours</td>
-							<td></td>
-							<td class="caption">minutes</td>
-							<td></td>
-							<td class="caption">seconds</td>
-						</tr>
-					</table>
-					<p>
-						{{#unless running}}
-							<button {{action "start"}}>start</button>
-						{{else}}
-							<button {{action "pause"}}>pause</button>
-						{{/unless}}
-						{{#if runningOrPaused}}
-							<button {{action "stop"}}>stop</button>
-							<button {{action "restart"}}>restart</button>
-						{{/if}}
-						<button {{action "snooze"}}>snooze</button>
-						{{#unless notificationDenied}}
-							{{#if notification}}
-								<button {{action "turnOffNotification"}}>don&#39;t notify</button>
-							{{else}}
-								<button {{action "turnOnNotification"}}>notify</button>
-							{{/if}}
-						{{/unless}}
-					</p>
-					<p class="copyright">© 2014 Dominic Liu</p>
-				</div>
-			</script>
-		</div>
 	</body>
 </html>
