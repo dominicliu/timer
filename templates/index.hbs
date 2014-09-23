@@ -27,12 +27,12 @@
 		<button {{action "restart"}}>restart</button>
 	{{/if}}
 	<button {{action "snooze"}}>snooze</button>
-	{{#unless notificationDenied}}
-		{{#if notification}}
-			<button {{action "turnOffNotification"}}>don&#39;t notify</button>
-		{{else}}
-			<button {{action "turnOnNotification"}}>notify</button>
-		{{/if}}
-	{{/unless}}
+</p>
+<p>
+	{{input type="checkbox" checked=notification id="notification" disabled=notificationDenied}}
+	<label for="notification">notification</label>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	{{input type="checkbox" checked=sound id="sound"}}
+	<label for="sound">sound</label>
 </p>
 <p class="copyright">© 2014 Dominic Liu</p>

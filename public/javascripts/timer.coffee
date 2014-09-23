@@ -16,15 +16,36 @@ Timer.Timer = Ember.Object.extend
 	notificationGranted: false
 	notificationDenied: false
 	notification: false
+	notificationInstance: null
+	sound: false
 
 timer = Timer.Timer.create {}
 timerId = null
 
-window.onbeforeunload = ->
-	if timer.get "running"
-    	return "Your timer is counting down."
-    else
-    	return
+Timer.IndexRoute = Ember.Route.extend
+	model: ->
+		return timer
+	afterModel: (model) ->
+		# retrieve data from cookies
+		if Cookies.get "hours"
+			model.set "hours", Cookies.get "hours"
+		if Cookies.get "minutes"
+			model.set "minutes", Cookies.get "minutes"
+		if Cookies.get "seconds"
+			model.set "seconds", Cookies.get "seconds"
+		if Cookies.get "notification"
+			model.set "notification", Cookies.get("notification") is "true"
+		if Cookies.get "sound"
+			model.set "sound", Cookies.get("sound") is "true"
+		# check notification permissions
+		unless Notification
+			return model.set "notificationDenied", true
+		permission = Notification.permission
+		switch permission
+			when "granted"
+				model.set "notificationGranted", true
+			when "denied"
+				model.set "notificationDenied", true
 
 Timer.IndexController = Ember.ObjectController.extend
 	# secondsDisplay: ((key, value) ->
@@ -34,9 +55,44 @@ Timer.IndexController = Ember.ObjectController.extend
 	# 				second: @get("seconds")
 	# 			.format "ss"
 	# 	).property "seconds"
+	init: ->
+		that = this
+		window.onbeforeunload = ->
+			if (notificationInstance = that.get "notificationInstance") and notificationInstance.close?
+				notificationInstance.close()
+			if timer.get "running"
+				return "Your timer is counting down."
+			else
+				return
+	runningOrPaused: (->
+			return @get("running") || @get("paused")
+		).property "model.running", "model.paused"
+	notificationChanged: (->
+			if @get "notification"
+				that = this
+				text = "Time is up!"
+				unless that.get "notificationGranted"
+					Notification.requestPermission (permission) ->
+						if permission is "granted"
+							that.set "notificationGranted", true
+							that.set "notification", true
+							setCookie "notification", true
+						else if permission is "denied"
+							that.set "notification", false
+							that.set "notificationDenied", true
+				else
+					setCookie "notification", true
+			else
+				setCookie "notification", false
+		).observes "notification"
+	soundChanged: (->
+			setCookie "sound", @get "sound"
+		).observes "sound"
 	actions:
 		start: ->
 			@set "running", true
+			if (notificationInstance = @get "notificationInstance") and notificationInstance.close?
+				notificationInstance.close()
 			unless @get "paused"
 				# normalize time
 				time = moment
@@ -69,8 +125,12 @@ Timer.IndexController = Ember.ObjectController.extend
 					.format "H:m:s"
 				if ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
 					if that.get "notification"
-						new Notification "Time is up!",
+						notificationInstance = new Notification "Time is up!",
 							icon: "../images/favicon.ico"
+						that.set "notificationInstance", notificationInstance
+					if that.get "sound"
+						audio = new Audio "../images/bell.mp3"
+						audio.play()
 					that.send "stop"
 			, countdown.HOURS|countdown.MINUTES|countdown.SECONDS
 		pause: ->
@@ -104,51 +164,6 @@ Timer.IndexController = Ember.ObjectController.extend
 				@set "minutes", 5
 				@set "seconds", 0
 				@send "start"
-
-		turnOnNotification: ->
-			that = this
-			text = "Time is up!"
-			unless that.get "notificationGranted"
-				Notification.requestPermission (permission) ->
-					if permission is "granted"
-						that.set "notificationGranted", true
-						that.set "notification", true
-						setCookie "notification", true
-					else if permission is "denied"
-						that.set "notificationDenied", true
-			else
-				that.set "notification", true
-				setCookie "notification", true
-		turnOffNotification: ->
-			@set "notification", false
-			setCookie "notification", false
-
-	runningOrPaused: (->
-			return @get("running") || @get("paused")
-		).property "model.running", "model.paused"
-
-Timer.IndexRoute = Ember.Route.extend
-	model: ->
-		return timer
-	afterModel: (model) ->
-		# retrieve data from cookies
-		if Cookies.get "hours"
-			model.set "hours", Cookies.get "hours"
-		if Cookies.get "minutes"
-			model.set "minutes", Cookies.get "minutes"
-		if Cookies.get "seconds"
-			model.set "seconds", Cookies.get "seconds"
-		if Cookies.get "notification"
-			model.set "notification", Cookies.get("notification") is "true"
-		# check notification permissions
-		unless Notification
-			return model.set "notificationDenied", true
-		permission = Notification.permission
-		switch permission
-			when "granted"
-				model.set "notificationGranted", true
-			when "denied"
-				model.set "notificationDenied", true
 
 Timer.FocusInputComponent = Ember.TextField.extend
 	becomeFocused: (->

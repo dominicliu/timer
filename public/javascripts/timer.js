@@ -19,26 +19,101 @@ Timer.Timer = Ember.Object.extend({
   paused: false,
   notificationGranted: false,
   notificationDenied: false,
-  notification: false
+  notification: false,
+  notificationInstance: null,
+  sound: false
 });
 
 timer = Timer.Timer.create({});
 
 timerId = null;
 
-window.onbeforeunload = function() {
-  if (timer.get("running")) {
-    return "Your timer is counting down.";
-  } else {
-
+Timer.IndexRoute = Ember.Route.extend({
+  model: function() {
+    return timer;
+  },
+  afterModel: function(model) {
+    var permission;
+    if (Cookies.get("hours")) {
+      model.set("hours", Cookies.get("hours"));
+    }
+    if (Cookies.get("minutes")) {
+      model.set("minutes", Cookies.get("minutes"));
+    }
+    if (Cookies.get("seconds")) {
+      model.set("seconds", Cookies.get("seconds"));
+    }
+    if (Cookies.get("notification")) {
+      model.set("notification", Cookies.get("notification") === "true");
+    }
+    if (Cookies.get("sound")) {
+      model.set("sound", Cookies.get("sound") === "true");
+    }
+    if (!Notification) {
+      return model.set("notificationDenied", true);
+    }
+    permission = Notification.permission;
+    switch (permission) {
+      case "granted":
+        return model.set("notificationGranted", true);
+      case "denied":
+        return model.set("notificationDenied", true);
+    }
   }
-};
+});
 
 Timer.IndexController = Ember.ObjectController.extend({
+  init: function() {
+    var that;
+    that = this;
+    return window.onbeforeunload = function() {
+      var notificationInstance;
+      if ((notificationInstance = that.get("notificationInstance")) && (notificationInstance.close != null)) {
+        notificationInstance.close();
+      }
+      if (timer.get("running")) {
+        return "Your timer is counting down.";
+      } else {
+
+      }
+    };
+  },
+  runningOrPaused: (function() {
+    return this.get("running") || this.get("paused");
+  }).property("model.running", "model.paused"),
+  notificationChanged: (function() {
+    var text, that;
+    if (this.get("notification")) {
+      that = this;
+      text = "Time is up!";
+      if (!that.get("notificationGranted")) {
+        return Notification.requestPermission(function(permission) {
+          if (permission === "granted") {
+            that.set("notificationGranted", true);
+            that.set("notification", true);
+            return setCookie("notification", true);
+          } else if (permission === "denied") {
+            that.set("notification", false);
+            return that.set("notificationDenied", true);
+          }
+        });
+      } else {
+        return setCookie("notification", true);
+      }
+    } else {
+      return setCookie("notification", false);
+    }
+  }).observes("notification"),
+  soundChanged: (function() {
+    return setCookie("sound", this.get("sound"));
+  }).observes("sound"),
   actions: {
     start: function() {
-      var that, time;
+      var notificationInstance, that, time;
       this.set("running", true);
+      if ((notificationInstance = this.get("notificationInstance")) && (notificationInstance.close != null)) {
+        notificationInstance.close();
+      }
       if (!this.get("paused")) {
         time = moment({
           hour: this.get("hours"),
@@ -58,6 +133,7 @@ Timer.IndexController = Ember.ObjectController.extend({
       this.set("paused", false);
       that = this;
       return timerId = countdown(moment().add("hours", this.get("hours")).add("minutes", this.get("minutes")).add("seconds", this.get("seconds")).toDate(), function(ts) {
+        var audio;
         timer.set("hours", ts.hours);
         timer.set("minutes", ts.minutes);
         timer.set("seconds", ts.seconds);
@@ -68,9 +144,14 @@ Timer.IndexController = Ember.ObjectController.extend({
         }).format("H:m:s");
         if (ts.hours === 0 && ts.minutes === 0 && ts.seconds === 0) {
           if (that.get("notification")) {
-            new Notification("Time is up!", {
+            notificationInstance = new Notification("Time is up!", {
               icon: "../images/favicon.ico"
             });
+            that.set("notificationInstance", notificationInstance);
+          }
+          if (that.get("sound")) {
+            audio = new Audio("../images/bell.mp3");
+            audio.play();
           }
           return that.send("stop");
         }
@@ -113,63 +194,6 @@ Timer.IndexController = Ember.ObjectController.extend({
         this.set("seconds", 0);
         return this.send("start");
       }
-    },
-    turnOnNotification: function() {
-      var text, that;
-      that = this;
-      text = "Time is up!";
-      if (!that.get("notificationGranted")) {
-        return Notification.requestPermission(function(permission) {
-          if (permission === "granted") {
-            that.set("notificationGranted", true);
-            that.set("notification", true);
-            return setCookie("notification", true);
-          } else if (permission === "denied") {
-            return that.set("notificationDenied", true);
-          }
-        });
-      } else {
-        that.set("notification", true);
-        return setCookie("notification", true);
-      }
-    },
-    turnOffNotification: function() {
-      this.set("notification", false);
-      return setCookie("notification", false);
-    }
-  },
-  runningOrPaused: (function() {
-    return this.get("running") || this.get("paused");
-  }).property("model.running", "model.paused")
-});
-
-Timer.IndexRoute = Ember.Route.extend({
-  model: function() {
-    return timer;
-  },
-  afterModel: function(model) {
-    var permission;
-    if (Cookies.get("hours")) {
-      model.set("hours", Cookies.get("hours"));
-    }
-    if (Cookies.get("minutes")) {
-      model.set("minutes", Cookies.get("minutes"));
-    }
-    if (Cookies.get("seconds")) {
-      model.set("seconds", Cookies.get("seconds"));
-    }
-    if (Cookies.get("notification")) {
-      model.set("notification", Cookies.get("notification") === "true");
-    }
-    if (!Notification) {
-      return model.set("notificationDenied", true);
-    }
-    permission = Notification.permission;
-    switch (permission) {
-      case "granted":
-        return model.set("notificationGranted", true);
-      case "denied":
-        return model.set("notificationDenied", true);
     }
   }
 });
