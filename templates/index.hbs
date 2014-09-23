@@ -27,12 +27,11 @@
 		<button {{action "restart"}}>restart</button>
 	{{/if}}
 	<button {{action "snooze"}}>snooze</button>
+</p>
+<p>
 	{{#unless notificationDenied}}
-		{{#if notification}}
-			<button {{action "turnOffNotification"}}>don&#39;t notify</button>
-		{{else}}
-			<button {{action "turnOnNotification"}}>notify</button>
-		{{/if}}
+		{{input type="checkbox" checked=notification id="notification"}}
+		<label for="notification">notification</label>
 	{{/unless}}
 </p>
 <p class="copyright">© 2014 Dominic Liu</p>

@@ -34,7 +34,63 @@ window.onbeforeunload = function() {
   }
 };
 
+Timer.IndexRoute = Ember.Route.extend({
+  model: function() {
+    return timer;
+  },
+  afterModel: function(model) {
+    var permission;
+    if (Cookies.get("hours")) {
+      model.set("hours", Cookies.get("hours"));
+    }
+    if (Cookies.get("minutes")) {
+      model.set("minutes", Cookies.get("minutes"));
+    }
+    if (Cookies.get("seconds")) {
+      model.set("seconds", Cookies.get("seconds"));
+    }
+    if (Cookies.get("notification")) {
+      model.set("notification", Cookies.get("notification") === "true");
+    }
+    if (!Notification) {
+      return model.set("notificationDenied", true);
+    }
+    permission = Notification.permission;
+    switch (permission) {
+      case "granted":
+        return model.set("notificationGranted", true);
+      case "denied":
+        return model.set("notificationDenied", true);
+    }
+  }
+});
+
 Timer.IndexController = Ember.ObjectController.extend({
+  runningOrPaused: (function() {
+    return this.get("running") || this.get("paused");
+  }).property("model.running", "model.paused"),
+  notificationChanged: (function() {
+    var text, that;
+    if (this.get("notification")) {
+      that = this;
+      text = "Time is up!";
+      if (!that.get("notificationGranted")) {
+        return Notification.requestPermission(function(permission) {
+          if (permission === "granted") {
+            that.set("notificationGranted", true);
+            that.set("notification", true);
+            return setCookie("notification", true);
+          } else if (permission === "denied") {
+            return that.set("notificationDenied", true);
+          }
+        });
+      } else {
+        return setCookie("notification", true);
+      }
+    } else {
+      return setCookie("notification", false);
+    }
+  }).observes("notification"),
   actions: {
     start: function() {
       var that, time;
@@ -113,63 +169,6 @@ Timer.IndexController = Ember.ObjectController.extend({
         this.set("seconds", 0);
         return this.send("start");
       }
-    },
-    turnOnNotification: function() {
-      var text, that;
-      that = this;
-      text = "Time is up!";
-      if (!that.get("notificationGranted")) {
-        return Notification.requestPermission(function(permission) {
-          if (permission === "granted") {
-            that.set("notificationGranted", true);
-            that.set("notification", true);
-            return setCookie("notification", true);
-          } else if (permission === "denied") {
-            return that.set("notificationDenied", true);
-          }
-        });
-      } else {
-        that.set("notification", true);
-        return setCookie("notification", true);
-      }
-    },
-    turnOffNotification: function() {
-      this.set("notification", false);
-      return setCookie("notification", false);
-    }
-  },
-  runningOrPaused: (function() {
-    return this.get("running") || this.get("paused");
-  }).property("model.running", "model.paused")
-});
-
-Timer.IndexRoute = Ember.Route.extend({
-  model: function() {
-    return timer;
-  },
-  afterModel: function(model) {
-    var permission;
-    if (Cookies.get("hours")) {
-      model.set("hours", Cookies.get("hours"));
-    }
-    if (Cookies.get("minutes")) {
-      model.set("minutes", Cookies.get("minutes"));
-    }
-    if (Cookies.get("seconds")) {
-      model.set("seconds", Cookies.get("seconds"));
-    }
-    if (Cookies.get("notification")) {
-      model.set("notification", Cookies.get("notification") === "true");
-    }
-    if (!Notification) {
-      return model.set("notificationDenied", true);
-    }
-    permission = Notification.permission;
-    switch (permission) {
-      case "granted":
-        return model.set("notificationGranted", true);
-      case "denied":
-        return model.set("notificationDenied", true);
     }
   }
 });
