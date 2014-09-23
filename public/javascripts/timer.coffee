@@ -16,6 +16,7 @@ Timer.Timer = Ember.Object.extend
 	notificationGranted: false
 	notificationDenied: false
 	notification: false
+	notificationInstance: null
 
 timer = Timer.Timer.create {}
 timerId = null
@@ -80,6 +81,8 @@ Timer.IndexController = Ember.ObjectController.extend
 	actions:
 		start: ->
 			@set "running", true
+			if (notificationInstance = @get "notificationInstance") and notificationInstance.close?
+				notificationInstance.close()
 			unless @get "paused"
 				# normalize time
 				time = moment
@@ -112,8 +115,9 @@ Timer.IndexController = Ember.ObjectController.extend
 					.format "H:m:s"
 				if ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
 					if that.get "notification"
-						new Notification "Time is up!",
+						notificationInstance = new Notification "Time is up!",
 							icon: "../images/favicon.ico"
+						that.set "notificationInstance", notificationInstance
 					that.send "stop"
 			, countdown.HOURS|countdown.MINUTES|countdown.SECONDS
 		pause: ->

@@ -19,7 +19,8 @@ Timer.Timer = Ember.Object.extend({
   paused: false,
   notificationGranted: false,
   notificationDenied: false,
-  notification: false
+  notification: false,
+  notificationInstance: null
 });
 
 timer = Timer.Timer.create({});
@@ -93,8 +94,11 @@ Timer.IndexController = Ember.ObjectController.extend({
   }).observes("notification"),
   actions: {
     start: function() {
-      var that, time;
+      var notificationInstance, that, time;
       this.set("running", true);
+      if ((notificationInstance = this.get("notificationInstance")) && (notificationInstance.close != null)) {
+        notificationInstance.close();
+      }
       if (!this.get("paused")) {
         time = moment({
           hour: this.get("hours"),
@@ -124,9 +128,10 @@ Timer.IndexController = Ember.ObjectController.extend({
         }).format("H:m:s");
         if (ts.hours === 0 && ts.minutes === 0 && ts.seconds === 0) {
           if (that.get("notification")) {
-            new Notification("Time is up!", {
+            notificationInstance = new Notification("Time is up!", {
               icon: "../images/favicon.ico"
             });
+            that.set("notificationInstance", notificationInstance);
           }
           return that.send("stop");
         }
