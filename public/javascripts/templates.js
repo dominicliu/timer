@@ -46,19 +46,6 @@ function program5(depth0,data) {
   return buffer;
   }
 
-function program7(depth0,data) {
-  
-  var buffer = '', helper, options;
-  data.buffer.push("\r\n		");
-  data.buffer.push(escapeExpression((helper = helpers.input || (depth0 && depth0.input),options={hash:{
-    'type': ("checkbox"),
-    'checked': ("notification"),
-    'id': ("notification")
-  },hashTypes:{'type': "STRING",'checked': "ID",'id': "STRING"},hashContexts:{'type': depth0,'checked': depth0,'id': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\r\n		<label for=\"notification\">notification</label>\r\n	");
-  return buffer;
-  }
-
   data.buffer.push("<div class=\"text-center\">\r\n<h1>timer</h1>\r\n<table>\r\n	<tr>\r\n		<td>");
   data.buffer.push(escapeExpression((helper = helpers.input || (depth0 && depth0.input),options={hash:{
     'type': ("text"),
@@ -92,9 +79,19 @@ function program7(depth0,data) {
   data.buffer.push("\r\n	<button ");
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "snooze", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["STRING"],data:data})));
   data.buffer.push(">snooze</button>\r\n</p>\r\n<p>\r\n	");
-  stack1 = helpers.unless.call(depth0, "notificationDenied", {hash:{},hashTypes:{},hashContexts:{},inverse:self.noop,fn:self.program(7, program7, data),contexts:[depth0],types:["ID"],data:data});
-  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\r\n</p>\r\n<p class=\"copyright\">© 2014 Dominic Liu</p>");
+  data.buffer.push(escapeExpression((helper = helpers.input || (depth0 && depth0.input),options={hash:{
+    'type': ("checkbox"),
+    'checked': ("notification"),
+    'id': ("notification"),
+    'disabled': ("notificationDenied")
+  },hashTypes:{'type': "STRING",'checked': "ID",'id': "STRING",'disabled': "ID"},hashContexts:{'type': depth0,'checked': depth0,'id': depth0,'disabled': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push("\r\n	<label for=\"notification\">notification</label>\r\n	&nbsp;&nbsp;&nbsp;&nbsp;\r\n	");
+  data.buffer.push(escapeExpression((helper = helpers.input || (depth0 && depth0.input),options={hash:{
+    'type': ("checkbox"),
+    'checked': ("sound"),
+    'id': ("sound")
+  },hashTypes:{'type': "STRING",'checked': "ID",'id': "STRING"},hashContexts:{'type': depth0,'checked': depth0,'id': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+  data.buffer.push("\r\n	<label for=\"sound\">sound</label>\r\n</p>\r\n<p class=\"copyright\">© 2014 Dominic Liu</p>");
   return buffer;
   
 });

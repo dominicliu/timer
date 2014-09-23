@@ -20,20 +20,13 @@ Timer.Timer = Ember.Object.extend({
   notificationGranted: false,
   notificationDenied: false,
   notification: false,
-  notificationInstance: null
+  notificationInstance: null,
+  sound: false
 });
 
 timer = Timer.Timer.create({});
 
 timerId = null;
-
-window.onbeforeunload = function() {
-  if (timer.get("running")) {
-    return "Your timer is counting down.";
-  } else {
-
-  }
-};
 
 Timer.IndexRoute = Ember.Route.extend({
   model: function() {
@@ -53,6 +46,9 @@ Timer.IndexRoute = Ember.Route.extend({
     if (Cookies.get("notification")) {
       model.set("notification", Cookies.get("notification") === "true");
     }
+    if (Cookies.get("sound")) {
+      model.set("sound", Cookies.get("sound") === "true");
+    }
     if (!Notification) {
       return model.set("notificationDenied", true);
     }
@@ -67,6 +63,21 @@ Timer.IndexRoute = Ember.Route.extend({
 });
 
 Timer.IndexController = Ember.ObjectController.extend({
+  init: function() {
+    var that;
+    that = this;
+    return window.onbeforeunload = function() {
+      var notificationInstance;
+      if ((notificationInstance = that.get("notificationInstance")) && (notificationInstance.close != null)) {
+        notificationInstance.close();
+      }
+      if (timer.get("running")) {
+        return "Your timer is counting down.";
+      } else {
+
+      }
+    };
+  },
   runningOrPaused: (function() {
     return this.get("running") || this.get("paused");
   }).property("model.running", "model.paused"),
@@ -82,6 +93,7 @@ Timer.IndexController = Ember.ObjectController.extend({
             that.set("notification", true);
             return setCookie("notification", true);
           } else if (permission === "denied") {
+            that.set("notification", false);
             return that.set("notificationDenied", true);
           }
         });
@@ -92,6 +104,9 @@ Timer.IndexController = Ember.ObjectController.extend({
       return setCookie("notification", false);
     }
   }).observes("notification"),
+  soundChanged: (function() {
+    return setCookie("sound", this.get("sound"));
+  }).observes("sound"),
   actions: {
     start: function() {
       var notificationInstance, that, time;
@@ -118,6 +133,7 @@ Timer.IndexController = Ember.ObjectController.extend({
       this.set("paused", false);
       that = this;
       return timerId = countdown(moment().add("hours", this.get("hours")).add("minutes", this.get("minutes")).add("seconds", this.get("seconds")).toDate(), function(ts) {
+        var audio;
         timer.set("hours", ts.hours);
         timer.set("minutes", ts.minutes);
         timer.set("seconds", ts.seconds);
@@ -132,6 +148,10 @@ Timer.IndexController = Ember.ObjectController.extend({
               icon: "../images/favicon.ico"
             });
             that.set("notificationInstance", notificationInstance);
+          }
+          if (that.get("sound")) {
+            audio = new Audio("../images/bell.mp3");
+            audio.play();
           }
           return that.send("stop");
         }

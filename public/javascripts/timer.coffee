@@ -17,15 +17,10 @@ Timer.Timer = Ember.Object.extend
 	notificationDenied: false
 	notification: false
 	notificationInstance: null
+	sound: false
 
 timer = Timer.Timer.create {}
 timerId = null
-
-window.onbeforeunload = ->
-	if timer.get "running"
-    	return "Your timer is counting down."
-    else
-    	return
 
 Timer.IndexRoute = Ember.Route.extend
 	model: ->
@@ -40,6 +35,8 @@ Timer.IndexRoute = Ember.Route.extend
 			model.set "seconds", Cookies.get "seconds"
 		if Cookies.get "notification"
 			model.set "notification", Cookies.get("notification") is "true"
+		if Cookies.get "sound"
+			model.set "sound", Cookies.get("sound") is "true"
 		# check notification permissions
 		unless Notification
 			return model.set "notificationDenied", true
@@ -58,6 +55,15 @@ Timer.IndexController = Ember.ObjectController.extend
 	# 				second: @get("seconds")
 	# 			.format "ss"
 	# 	).property "seconds"
+	init: ->
+		that = this
+		window.onbeforeunload = ->
+			if (notificationInstance = that.get "notificationInstance") and notificationInstance.close?
+				notificationInstance.close()
+			if timer.get "running"
+				return "Your timer is counting down."
+			else
+				return
 	runningOrPaused: (->
 			return @get("running") || @get("paused")
 		).property "model.running", "model.paused"
@@ -72,12 +78,16 @@ Timer.IndexController = Ember.ObjectController.extend
 							that.set "notification", true
 							setCookie "notification", true
 						else if permission is "denied"
+							that.set "notification", false
 							that.set "notificationDenied", true
 				else
 					setCookie "notification", true
 			else
 				setCookie "notification", false
 		).observes "notification"
+	soundChanged: (->
+			setCookie "sound", @get "sound"
+		).observes "sound"
 	actions:
 		start: ->
 			@set "running", true
@@ -118,6 +128,9 @@ Timer.IndexController = Ember.ObjectController.extend
 						notificationInstance = new Notification "Time is up!",
 							icon: "../images/favicon.ico"
 						that.set "notificationInstance", notificationInstance
+					if that.get "sound"
+						audio = new Audio "../images/bell.mp3"
+						audio.play()
 					that.send "stop"
 			, countdown.HOURS|countdown.MINUTES|countdown.SECONDS
 		pause: ->

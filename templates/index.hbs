@@ -29,9 +29,10 @@
 	<button {{action "snooze"}}>snooze</button>
 </p>
 <p>
-	{{#unless notificationDenied}}
-		{{input type="checkbox" checked=notification id="notification"}}
-		<label for="notification">notification</label>
-	{{/unless}}
+	{{input type="checkbox" checked=notification id="notification" disabled=notificationDenied}}
+	<label for="notification">notification</label>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	{{input type="checkbox" checked=sound id="sound"}}
+	<label for="sound">sound</label>
 </p>
 <p class="copyright">© 2014 Dominic Liu</p>
