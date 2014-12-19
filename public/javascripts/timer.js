@@ -78,8 +78,11 @@ Timer.IndexController = Ember.ObjectController.extend({
       }
     };
   },
-  runningOrPaused: (function() {
-    return this.get("running") || this.get("paused");
+  notRunning: (function() {
+    return !this.get("running");
+  }).property("model.running"),
+  notRunningOrPaused: (function() {
+    return !(this.get("running") || this.get("paused"));
   }).property("model.running", "model.paused"),
   notificationChanged: (function() {
     var text, that;

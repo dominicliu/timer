@@ -64,8 +64,11 @@ Timer.IndexController = Ember.ObjectController.extend
 				return "Your timer is counting down."
 			else
 				return
-	runningOrPaused: (->
-			return @get("running") || @get("paused")
+	notRunning: (->
+			return not @get("running")
+		).property "model.running"
+	notRunningOrPaused: (->
+			return not (@get("running") || @get("paused"))
 		).property "model.running", "model.paused"
 	notificationChanged: (->
 			if @get "notification"

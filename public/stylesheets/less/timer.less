@@ -105,9 +105,24 @@ body {
 		line-height: 16px;
 		padding: 10px 12px;
 		margin-right: 12px;
+		transition: opacity 0.5s;
 
 		&:focus {
 			outline: none;
+		}
+
+		&:disabled {
+			opacity: 0.3;
+		}
+
+		&:last-child {
+			margin-right: 0px;
+		}
+
+		img.icon {
+			width: 13px;
+			height: 13px;
+			margin-right: 7px;
 		}
 	}
 
