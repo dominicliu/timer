@@ -17,16 +17,11 @@
 	</tr>
 </table>
 <p>
-	{{#unless running}}
-		<button {{action "start"}}>start</button>
-	{{else}}
-		<button {{action "pause"}}>pause</button>
-	{{/unless}}
-	{{#if runningOrPaused}}
-		<button {{action "stop"}}>stop</button>
-		<button {{action "restart"}}>restart</button>
-	{{/if}}
-	<button {{action "snooze"}}>snooze</button>
+	<button {{action "start"}} {{bind-attr disabled=running}}><img class="icon" src="images/start.jpg">start</button>
+	<button {{action "pause"}} {{bind-attr disabled=notRunning}}><img class="icon" src="images/pause.jpg">pause</button>
+	<button {{action "stop"}} {{bind-attr disabled=notRunningOrPaused}}><img class="icon" src="images/stop.jpg">stop</button>
+	<button {{action "restart"}} {{bind-attr disabled=notRunningOrPaused}}><img class="icon" src="images/restart.jpg">restart</button>
+	<button {{action "snooze"}}><img class="icon" src="images/snooze.jpg">snooze</button>
 </p>
 <p>
 	{{input type="checkbox" checked=notification id="notification" disabled=notificationDenied}}
