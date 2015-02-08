@@ -145,7 +145,7 @@ Timer.IndexController = Ember.ObjectController.extend({
           minute: timer.get("minutes"),
           second: timer.get("seconds")
         }).format("H:m:s");
-        if (ts.hours === 0 && ts.minutes === 0 && ts.seconds === 0) {
+        if (ts.value >= 0 || ts.hours === 0 && ts.minutes === 0 && ts.seconds === 0) {
           if (that.get("notification")) {
             notificationInstance = new Notification("Time is up!", {
               icon: "../images/favicon.ico"
