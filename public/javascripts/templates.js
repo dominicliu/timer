@@ -108,7 +108,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   data.buffer.push(" &nbsp;&nbsp; Play: ");
   stack1 = helpers._triageMustache.call(depth0, "playTimeFormatted", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push("\r\n</p>\r\n<p class=\"copyright\">© 2014 Dominic Liu</p>");
+  data.buffer.push("\r\n</p>\r\n<p class=\"copyright\">© 2014-2015 Dominic Liu</p>");
   return buffer;
   
 });
