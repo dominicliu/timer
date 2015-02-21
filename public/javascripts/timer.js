@@ -21,7 +21,11 @@ Timer.Timer = Ember.Object.extend({
   notificationDenied: false,
   notification: false,
   notificationInstance: null,
-  sound: false
+  sound: false,
+  mode: "play",
+  studyTime: 0,
+  workTime: 0,
+  playTime: 0
 });
 
 timer = Timer.Timer.create({});
@@ -33,7 +37,7 @@ Timer.IndexRoute = Ember.Route.extend({
     return timer;
   },
   afterModel: function(model) {
-    var permission;
+    var permission, today;
     if (Cookies.get("hours")) {
       model.set("hours", Cookies.get("hours"));
     }
@@ -42,6 +46,21 @@ Timer.IndexRoute = Ember.Route.extend({
     }
     if (Cookies.get("seconds")) {
       model.set("seconds", Cookies.get("seconds"));
+    }
+    if (Cookies.get("mode")) {
+      model.set("mode", Cookies.get("mode"));
+    }
+    today = moment().format("YYYY MM DD");
+    if (Cookies.get("lastUsedDate") === today) {
+      if (Cookies.get("studyTime")) {
+        model.set("studyTime", parseInt(Cookies.get("studyTime")));
+      }
+      if (Cookies.get("workTime")) {
+        model.set("workTime", parseInt(Cookies.get("workTime")));
+      }
+      if (Cookies.get("playTime")) {
+        model.set("playTime", parseInt(Cookies.get("playTime")));
+      }
     }
     if (Cookies.get("notification")) {
       model.set("notification", Cookies.get("notification") === "true");
@@ -68,6 +87,7 @@ Timer.IndexController = Ember.ObjectController.extend({
     that = this;
     return window.onbeforeunload = function() {
       var notificationInstance;
+      that.send("saveTimes");
       if ((notificationInstance = that.get("notificationInstance")) && (notificationInstance.close != null)) {
         notificationInstance.close();
       }
@@ -110,9 +130,36 @@ Timer.IndexController = Ember.ObjectController.extend({
   soundChanged: (function() {
     return setCookie("sound", this.get("sound"));
   }).observes("sound"),
+  isStudying: (function() {
+    return this.get("model.mode") === "study";
+  }).property("mode"),
+  isWorking: (function() {
+    return this.get("model.mode") === "work";
+  }).property("mode"),
+  isPlaying: (function() {
+    return this.get("model.mode") === "play";
+  }).property("mode"),
+  studyTimeFormatted: (function() {
+    var duration, time;
+    time = this.get("model.studyTime");
+    duration = moment.duration(time, "seconds");
+    return duration.hours() + ":" + duration.minutes() + ":" + duration.seconds();
+  }).property("model.studyTime"),
+  workTimeFormatted: (function() {
+    var duration, time;
+    time = this.get("model.workTime");
+    duration = moment.duration(time, "seconds");
+    return duration.hours() + ":" + duration.minutes() + ":" + duration.seconds();
+  }).property("model.workTime"),
+  playTimeFormatted: (function() {
+    var duration, time;
+    time = this.get("model.playTime");
+    duration = moment.duration(time, "seconds");
+    return duration.hours() + ":" + duration.minutes() + ":" + duration.seconds();
+  }).property("model.playTime"),
   actions: {
     start: function() {
-      var notificationInstance, that, time;
+      var firstSecond, notificationInstance, that, time;
       this.set("running", true);
       if ((notificationInstance = this.get("notificationInstance")) && (notificationInstance.close != null)) {
         notificationInstance.close();
@@ -135,11 +182,17 @@ Timer.IndexController = Ember.ObjectController.extend({
       }
       this.set("paused", false);
       that = this;
+      firstSecond = true;
       return timerId = countdown(moment().add("hours", this.get("hours")).add("minutes", this.get("minutes")).add("seconds", this.get("seconds")).toDate(), function(ts) {
-        var audio;
+        var audio, mode;
         timer.set("hours", ts.hours);
         timer.set("minutes", ts.minutes);
         timer.set("seconds", ts.seconds);
+        mode = that.get("model.mode");
+        if (!firstSecond) {
+          that.incrementProperty("model." + mode + "Time");
+        }
+        firstSecond = false;
         document.title = "timer - " + moment({
           hour: timer.get("hours"),
           minute: timer.get("minutes"),
@@ -176,6 +229,7 @@ Timer.IndexController = Ember.ObjectController.extend({
       this.set("hours", this.get("initialHours"));
       this.set("minutes", this.get("initialMinutes"));
       this.set("seconds", this.get("initialSeconds"));
+      this.send("saveTimes");
       return document.title = "timer";
     },
     restart: function() {
@@ -197,6 +251,18 @@ Timer.IndexController = Ember.ObjectController.extend({
         this.set("seconds", 0);
         return this.send("start");
       }
+    },
+    setMode: function(mode) {
+      this.set("mode", mode);
+      return setCookie("mode", mode);
+    },
+    saveTimes: function() {
+      var today;
+      setCookie("studyTime", this.get("model.studyTime"));
+      setCookie("workTime", this.get("model.workTime"));
+      setCookie("playTime", this.get("model.playTime"));
+      today = moment().format("YYYY MM DD");
+      return setCookie("lastUsedDate", today);
     }
   }
 });

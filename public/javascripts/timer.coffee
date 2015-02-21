@@ -18,6 +18,10 @@ Timer.Timer = Ember.Object.extend
 	notification: false
 	notificationInstance: null
 	sound: false
+	mode: "play"
+	studyTime: 0
+	workTime: 0
+	playTime: 0
 
 timer = Timer.Timer.create {}
 timerId = null
@@ -33,6 +37,18 @@ Timer.IndexRoute = Ember.Route.extend
 			model.set "minutes", Cookies.get "minutes"
 		if Cookies.get "seconds"
 			model.set "seconds", Cookies.get "seconds"
+
+		if Cookies.get "mode"
+			model.set "mode", Cookies.get "mode"
+		today = moment().format "YYYY MM DD"
+		if Cookies.get("lastUsedDate") is today
+			if Cookies.get "studyTime"
+				model.set "studyTime", parseInt Cookies.get("studyTime")
+			if Cookies.get "workTime"
+				model.set "workTime", parseInt Cookies.get("workTime")
+			if Cookies.get "playTime"
+				model.set "playTime", parseInt Cookies.get("playTime")
+
 		if Cookies.get "notification"
 			model.set "notification", Cookies.get("notification") is "true"
 		if Cookies.get "sound"
@@ -58,6 +74,7 @@ Timer.IndexController = Ember.ObjectController.extend
 	init: ->
 		that = this
 		window.onbeforeunload = ->
+			that.send "saveTimes"
 			if (notificationInstance = that.get "notificationInstance") and notificationInstance.close?
 				notificationInstance.close()
 			if timer.get "running"
@@ -91,6 +108,30 @@ Timer.IndexController = Ember.ObjectController.extend
 	soundChanged: (->
 			setCookie "sound", @get "sound"
 		).observes "sound"
+	isStudying: (->
+			@get("model.mode") is "study"
+		).property "mode"
+	isWorking: (->
+			@get("model.mode") is "work"
+		).property "mode"
+	isPlaying: (->
+			@get("model.mode") is "play"
+		).property "mode"
+	studyTimeFormatted: (->
+			time = @get "model.studyTime"
+			duration = moment.duration(time, "seconds")
+			duration.hours() + ":" + duration.minutes() + ":" + duration.seconds()
+		).property "model.studyTime"
+	workTimeFormatted: (->
+			time = @get "model.workTime"
+			duration = moment.duration(time, "seconds")
+			duration.hours() + ":" + duration.minutes() + ":" + duration.seconds()
+		).property "model.workTime"
+	playTimeFormatted: (->
+			time = @get "model.playTime"
+			duration = moment.duration(time, "seconds")
+			duration.hours() + ":" + duration.minutes() + ":" + duration.seconds()
+		).property "model.playTime"
 	actions:
 		start: ->
 			@set "running", true
@@ -117,10 +158,17 @@ Timer.IndexController = Ember.ObjectController.extend
 				setCookie "seconds", @get "seconds"
 			@set "paused", false
 			that = this
+			firstSecond = true
 			timerId = countdown moment().add("hours", @get "hours").add("minutes", @get "minutes").add("seconds", @get "seconds").toDate(), (ts) ->
 				timer.set "hours", ts.hours
 				timer.set "minutes", ts.minutes
 				timer.set "seconds", ts.seconds
+
+				mode = that.get "model.mode"
+				unless firstSecond
+					that.incrementProperty "model.#{mode}Time"
+				firstSecond = false
+
 				document.title = "timer - " + moment
 						hour: timer.get "hours"
 						minute: timer.get "minutes"
@@ -149,6 +197,7 @@ Timer.IndexController = Ember.ObjectController.extend
 			@set "hours", @get "initialHours"
 			@set "minutes", @get "initialMinutes"
 			@set "seconds", @get "initialSeconds"
+			@send "saveTimes"
 			document.title = "timer"
 		restart: ->
 			@send "stop"
@@ -167,6 +216,15 @@ Timer.IndexController = Ember.ObjectController.extend
 				@set "minutes", 5
 				@set "seconds", 0
 				@send "start"
+		setMode: (mode) ->
+			@set "mode", mode
+			setCookie "mode", mode
+		saveTimes: ->
+			setCookie "studyTime", @get "model.studyTime"
+			setCookie "workTime", @get "model.workTime"
+			setCookie "playTime", @get "model.playTime"
+			today = moment().format "YYYY MM DD"
+			setCookie "lastUsedDate", today
 
 Timer.FocusInputComponent = Ember.TextField.extend
 	becomeFocused: (->
