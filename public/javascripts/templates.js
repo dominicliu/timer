@@ -87,25 +87,25 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
   },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
   data.buffer.push(" ");
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "setMode", "study", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0],types:["STRING","STRING"],data:data})));
-  data.buffer.push(">Study</button>\r\n	<button type=\"button\" ");
+  data.buffer.push(">study</button>\r\n	<button type=\"button\" ");
   data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
     'class': (":btn isWorking:btn-primary:btn-default")
   },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
   data.buffer.push(" ");
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "setMode", "work", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0],types:["STRING","STRING"],data:data})));
-  data.buffer.push(">Work</button>\r\n	<button type=\"button\" ");
+  data.buffer.push(">work</button>\r\n	<button type=\"button\" ");
   data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
     'class': (":btn isPlaying:btn-primary:btn-default")
   },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
   data.buffer.push(" ");
   data.buffer.push(escapeExpression(helpers.action.call(depth0, "setMode", "play", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0],types:["STRING","STRING"],data:data})));
-  data.buffer.push(">Play</button>\r\n</div>\r\n<div class=\"space\"></div>\r\n<div class=\"space\"></div>\r\n<div class=\"space\"></div>\r\n<p>\r\n	Study: ");
+  data.buffer.push(">play</button>\r\n</div>\r\n<div class=\"space\"></div>\r\n<div class=\"space\"></div>\r\n<div class=\"space\"></div>\r\n<p>\r\n	study: ");
   stack1 = helpers._triageMustache.call(depth0, "studyTimeFormatted", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push(" &nbsp;&nbsp; Work: ");
+  data.buffer.push(" &nbsp;&nbsp; work: ");
   stack1 = helpers._triageMustache.call(depth0, "workTimeFormatted", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-  data.buffer.push(" &nbsp;&nbsp; Play: ");
+  data.buffer.push(" &nbsp;&nbsp; play: ");
   stack1 = helpers._triageMustache.call(depth0, "playTimeFormatted", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
   if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
   data.buffer.push("\r\n</p>\r\n<p class=\"copyright\">© 2014-2015 Dominic Liu</p>");
