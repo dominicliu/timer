@@ -30,4 +30,15 @@
 	{{input type="checkbox" checked=sound id="sound"}}
 	<label for="sound">sound</label>
 </p>
-<p class="copyright">© 2014 Dominic Liu</p>
+<div class="btn-group" role="group" aria-label="...">
+	<button type="button" {{bind-attr class=":btn isStudying:btn-primary:btn-default"}} {{action "setMode" "study"}}>study</button>
+	<button type="button" {{bind-attr class=":btn isWorking:btn-primary:btn-default"}} {{action "setMode" "work"}}>work</button>
+	<button type="button" {{bind-attr class=":btn isPlaying:btn-primary:btn-default"}} {{action "setMode" "play"}}>play</button>
+</div>
+<div class="space"></div>
+<div class="space"></div>
+<div class="space"></div>
+<p>
+	study: {{studyTimeFormatted}} &nbsp;&nbsp; work: {{workTimeFormatted}} &nbsp;&nbsp; play: {{playTimeFormatted}}
+</p>
+<p class="copyright">© 2014-2015 Dominic Liu</p>

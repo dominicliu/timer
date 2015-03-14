@@ -15,7 +15,7 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
 Ember.TEMPLATES["index"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
 this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-  var buffer = '', helper, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+  var buffer = '', stack1, helper, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
   data.buffer.push("<div class=\"text-center\">\r\n<h1>timer</h1>\r\n<table>\r\n	<tr>\r\n		<td>");
@@ -81,7 +81,34 @@ helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
     'checked': ("sound"),
     'id': ("sound")
   },hashTypes:{'type': "STRING",'checked': "ID",'id': "STRING"},hashContexts:{'type': depth0,'checked': depth0,'id': depth0},contexts:[],types:[],data:data},helper ? helper.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-  data.buffer.push("\r\n	<label for=\"sound\">sound</label>\r\n</p>\r\n<p class=\"copyright\">© 2014 Dominic Liu</p>");
+  data.buffer.push("\r\n	<label for=\"sound\">sound</label>\r\n</p>\r\n<div class=\"btn-group\" role=\"group\" aria-label=\"...\">\r\n	<button type=\"button\" ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'class': (":btn isStudying:btn-primary:btn-default")
+  },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(" ");
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "setMode", "study", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0],types:["STRING","STRING"],data:data})));
+  data.buffer.push(">study</button>\r\n	<button type=\"button\" ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'class': (":btn isWorking:btn-primary:btn-default")
+  },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(" ");
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "setMode", "work", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0],types:["STRING","STRING"],data:data})));
+  data.buffer.push(">work</button>\r\n	<button type=\"button\" ");
+  data.buffer.push(escapeExpression(helpers['bind-attr'].call(depth0, {hash:{
+    'class': (":btn isPlaying:btn-primary:btn-default")
+  },hashTypes:{'class': "STRING"},hashContexts:{'class': depth0},contexts:[],types:[],data:data})));
+  data.buffer.push(" ");
+  data.buffer.push(escapeExpression(helpers.action.call(depth0, "setMode", "play", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0,depth0],types:["STRING","STRING"],data:data})));
+  data.buffer.push(">play</button>\r\n</div>\r\n<div class=\"space\"></div>\r\n<div class=\"space\"></div>\r\n<div class=\"space\"></div>\r\n<p>\r\n	study: ");
+  stack1 = helpers._triageMustache.call(depth0, "studyTimeFormatted", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push(" &nbsp;&nbsp; work: ");
+  stack1 = helpers._triageMustache.call(depth0, "workTimeFormatted", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push(" &nbsp;&nbsp; play: ");
+  stack1 = helpers._triageMustache.call(depth0, "playTimeFormatted", {hash:{},hashTypes:{},hashContexts:{},contexts:[depth0],types:["ID"],data:data});
+  if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+  data.buffer.push("\r\n</p>\r\n<p class=\"copyright\">© 2014-2015 Dominic Liu</p>");
   return buffer;
   
 });
