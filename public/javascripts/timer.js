@@ -83,9 +83,9 @@ Timer.IndexRoute = Ember.Route.extend({
 
 Timer.IndexController = Ember.ObjectController.extend({
   init: function() {
-    var that;
+    var m, that;
     that = this;
-    return window.onbeforeunload = function() {
+    window.onbeforeunload = function() {
       var notificationInstance;
       that.send("saveTimes");
       if ((notificationInstance = that.get("notificationInstance")) && (notificationInstance.close != null)) {
@@ -97,6 +97,15 @@ Timer.IndexController = Ember.ObjectController.extend({
 
       }
     };
+    m = moment({
+      hour: 0
+    }).add(1, "days");
+    return setTimeout(function() {
+      that.set("model.studyTime", 0);
+      that.set("model.workTime", 0);
+      that.set("model.playTime", 0);
+      return that.send("saveTimes");
+    }, m.diff(moment()));
   },
   notRunning: (function() {
     return !this.get("running");

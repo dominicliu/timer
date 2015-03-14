@@ -81,6 +81,15 @@ Timer.IndexController = Ember.ObjectController.extend
 				return "Your timer is counting down."
 			else
 				return
+		m = moment
+			hour: 0
+		.add 1, "days"
+		setTimeout ->
+			that.set "model.studyTime", 0
+			that.set "model.workTime", 0
+			that.set "model.playTime", 0
+			that.send "saveTimes"
+		, m.diff(moment())
 	notRunning: (->
 			return not @get("running")
 		).property "model.running"
