@@ -6,11 +6,6 @@ module.exports = (grunt) ->
 				tasks: ['coffee:compile']
 				options:
 					atBegin: true
-			emberTemplates:
-				files: ["<%= emberTemplates.compile.src %>"]
-				tasks: ["emberTemplates:compile"]
-				options:
-					atBegin: true
 
 		coffee:
 			compile:
@@ -22,15 +17,6 @@ module.exports = (grunt) ->
 				ext: '.js'
 				options:
 					bare: true
-		dirs:
-			templates: "templates"
-		emberTemplates:
-			compile:
-				src: "<%= dirs.templates %>/**/*.hbs"
-				dest: "public/javascripts/templates.js"
-				options:
-					templateBasePath: "<%= dirs.templates %>"
 
 	grunt.loadNpmTasks "grunt-contrib-coffee"
-	grunt.loadNpmTasks "grunt-ember-templates"
 	grunt.loadNpmTasks "grunt-contrib-watch"
