@@ -16,7 +16,14 @@ timer.controller "indexController", ["$scope", ($scope) ->
 
 	$scope.notification = false
 	$scope.notificationInstance = null
+	$scope.notificationGranted = false
+	$scope.notificationDenied = false
 	$scope.sound = false
+
+	$scope.mode = "study"
+	$scope.studyTime = 0
+	$scope.workTime = 0
+	$scope.playTime = 0
 
 	$scope.setCookie = (key, value) ->
 		Cookies.set key, value,
@@ -30,16 +37,16 @@ timer.controller "indexController", ["$scope", ($scope) ->
 	if seconds = Cookies.get "seconds"
 		$scope.seconds = seconds
 
-	# if Cookies.get "mode"
-	# 	model.set "mode", Cookies.get "mode"
-	# today = moment().format "YYYY MM DD"
-	# if Cookies.get("lastUsedDate") is today
-	# 	if Cookies.get "studyTime"
-	# 		model.set "studyTime", parseInt Cookies.get("studyTime")
-	# 	if Cookies.get "workTime"
-	# 		model.set "workTime", parseInt Cookies.get("workTime")
-	# 	if Cookies.get "playTime"
-	# 		model.set "playTime", parseInt Cookies.get("playTime")
+	if Cookies.get "mode"
+		$scope.mode = Cookies.get "mode"
+	today = moment().format "YYYY MM DD"
+	if Cookies.get("lastUsedDate") is today
+		if Cookies.get "studyTime"
+			$scope.studyTime = parseInt Cookies.get("studyTime")
+		if Cookies.get "workTime"
+			$scope.workTime = parseInt Cookies.get("workTime")
+		if Cookies.get "playTime"
+			$scope.playTime = parseInt Cookies.get("playTime")
 
 	if Cookies.get "notification"
 		$scope.notification = Cookies.get("notification") is "true"
@@ -54,6 +61,24 @@ timer.controller "indexController", ["$scope", ($scope) ->
 			$scope.notificationGranted = true
 		when "denied"
 			$scope.notificationDenied = true
+
+	window.onbeforeunload = ->
+		$scope.saveTimes()
+		if $scope.notificationInstance and $scope.notificationInstance.close?
+			$scope.notificationInstance.close()
+		if $scope.running
+			return "Your timer is counting down."
+		else
+			return
+	m = moment
+		hour: 0
+	.add 1, "days"
+	setTimeout ->
+		$scope.studyTime = 0
+		$scope.workTime = 0
+		$scope.playTime = 0
+		$scope.saveTimes()
+	, m.diff(moment())
 
 	$scope.$watch "notification", ->
 		if $scope.notification
@@ -98,16 +123,16 @@ timer.controller "indexController", ["$scope", ($scope) ->
 			$scope.setCookie "seconds", $scope.seconds
 		$scope.paused = false
 		that = this
-		firstSecond = true
+		lastTimeValue = null
 		$scope.timerId = countdown moment().add("hours", $scope.hours).add("minutes", $scope.minutes).add("seconds", $scope.seconds).toDate(), (ts) ->
 			$scope.hours = ts.hours
 			$scope.minutes = ts.minutes
 			$scope.seconds = ts.seconds
 
-			# mode = that.get "model.mode"
-			# unless firstSecond
-			# 	that.incrementProperty "model.#{mode}Time"
-			# firstSecond = false
+			mode = $scope.mode
+			if lastTimeValue
+				$scope["#{mode}Time"] += ts.value - lastTimeValue
+			lastTimeValue = ts.value
 
 			document.title = "timer - " + moment
 					hour: $scope.hours
@@ -138,7 +163,7 @@ timer.controller "indexController", ["$scope", ($scope) ->
 		$scope.hours = $scope.initialHours
 		$scope.minutes = $scope.initialMinutes
 		$scope.seconds = $scope.initialSeconds
-		# $scope.saveTimes()
+		$scope.saveTimes()
 		document.title = "timer"
 	$scope.restart = ->
 		$scope.stop()
@@ -157,12 +182,18 @@ timer.controller "indexController", ["$scope", ($scope) ->
 			$scope.minutes = 5
 			$scope.seconds = 0
 			$scope.start()
-	# $scope.saveTimes = ->
-	# 	$scope.setCookie "studyTime", $scope.model.studyTime
-	# 	$scope.setCookie "workTime", $scope.model.workTime
-	# 	$scope.setCookie "playTime", $scope.model.playTime
-	# 	today = moment().format "YYYY MM DD"
-	# 	$scope.setCookie "lastUsedDate", today
+	$scope.setMode = (mode) ->
+		$scope.mode = mode
+		$scope.setCookie "mode", mode
+	$scope.saveTimes = ->
+		$scope.setCookie "studyTime", $scope.studyTime
+		$scope.setCookie "workTime", $scope.workTime
+		$scope.setCookie "playTime", $scope.playTime
+		today = moment().format "YYYY MM DD"
+		$scope.setCookie "lastUsedDate", today
+	$scope.formatTime = (time) ->
+		duration = moment.duration(time / 1000, "seconds")
+		duration.hours() + ":" + duration.minutes() + ":" + duration.seconds()
 ]
 
 timer.directive 'ngEnter', ->
@@ -172,3 +203,8 @@ timer.directive 'ngEnter', ->
 				scope.$apply ->
 					scope.$eval attrs.ngEnter, 'event': event
 				event.preventDefault()
+
+timer.directive 'ngAutoFocus', ->
+	(scope, element, attrs) ->
+		element[0].focus()
+		element[0].selectionStart = element[0].selectionEnd = element[0].value.length # focus at the end

@@ -31,7 +31,7 @@
 					<td><input type="text" ng-model="hours" id="hours" ng-disabled="running" ng-enter="start()"></td>
 					<td class="colon">:</td>
 					<!-- todo: make focus -->
-					<td><input type="text" ng-model="minutes" id="minutes" ng-disabled="running" ng-enter="start()"></td>
+					<td><input type="text" ng-model="minutes" id="minutes" ng-disabled="running" ng-enter="start()" ng-auto-focus></td>
 					<td class="colon">:</td>
 					<td><input type="text" ng-model="seconds" id="seconds" ng-disabled="running" ng-enter="start()"></td>
 				</tr>
@@ -57,19 +57,19 @@
 				<input type="checkbox" ng-model="sound" id="sound">
 				<label for="sound">sound</label>
 			</p>
-			<!--
 			<div class="btn-group" role="group" aria-label="...">
-				<button type="button" {{bind-attr class=":btn isStudying:btn-primary:btn-default"}} {{action "setMode" "study"}}>study</button>
-				<button type="button" {{bind-attr class=":btn isWorking:btn-primary:btn-default"}} {{action "setMode" "work"}}>work</button>
-				<button type="button" {{bind-attr class=":btn isPlaying:btn-primary:btn-default"}} {{action "setMode" "play"}}>play</button>
+				<button type="button" class="btn" ng-class="{ 'btn-primary': mode === 'study', 'btn-default': mode !== 'study' }" ng-click="setMode('study')">study</button>
+				<button type="button" class="btn" ng-class="{ 'btn-primary': mode === 'work', 'btn-default': mode !== 'work' }" ng-click="setMode('work')">work</button>
+				<button type="button" class="btn" ng-class="{ 'btn-primary': mode === 'play', 'btn-default': mode !== 'play' }" ng-click="setMode('play')">play</button>
 			</div>
+			
 			<div class="space"></div>
 			<div class="space"></div>
 			<div class="space"></div>
 			<p>
-				study: {{studyTimeFormatted}} &nbsp;&nbsp; work: {{workTimeFormatted}} &nbsp;&nbsp; play: {{playTimeFormatted}}
+				study: {{formatTime(studyTime)}} &nbsp;&nbsp; work: {{formatTime(workTime)}} &nbsp;&nbsp; play: {{formatTime(playTime)}}
 			</p>
-			<p class="copyright">© 2014-2015 Dominic Liu</p> -->
+			<p class="copyright">© 2014-2015 Dominic Liu</p> 
 		</div>
 	</body>
 </html>
