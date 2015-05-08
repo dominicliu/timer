@@ -4,6 +4,7 @@ timer = angular.module("timer", []);
 
 timer.controller("indexController", [
   "$scope", function($scope) {
+    var hours, minutes, permission, seconds;
     $scope.timerId = null;
     $scope.initialHours = 0;
     $scope.initialMinutes = 20;
@@ -13,14 +14,63 @@ timer.controller("indexController", [
     $scope.seconds = 5;
     $scope.running = false;
     $scope.paused = false;
-    $scope.notification = true;
+    $scope.notification = false;
     $scope.notificationInstance = null;
-    $scope.sound = true;
+    $scope.sound = false;
     $scope.setCookie = function(key, value) {
       return Cookies.set(key, value, {
         expires: 2592000
       });
     };
+    if (hours = Cookies.get("hours")) {
+      $scope.hours = hours;
+    }
+    if (minutes = Cookies.get("minutes")) {
+      $scope.minutes = minutes;
+    }
+    if (seconds = Cookies.get("seconds")) {
+      $scope.seconds = seconds;
+    }
+    if (Cookies.get("notification")) {
+      $scope.notification = Cookies.get("notification") === "true";
+    }
+    if (Cookies.get("sound")) {
+      $scope.sound = Cookies.get("sound") === "true";
+    }
+    if (!Notification) {
+      return $scope.notificationDenied = true;
+    }
+    permission = Notification.permission;
+    switch (permission) {
+      case "granted":
+        $scope.notificationGranted = true;
+        break;
+      case "denied":
+        $scope.notificationDenied = true;
+    }
+    $scope.$watch("notification", function() {
+      if ($scope.notification) {
+        if (!$scope.notificationGranted) {
+          return Notification.requestPermission(function(permission) {
+            if (permission === "granted") {
+              $scope.notificationGranted = true;
+              $scope.notification = true;
+              return $scope.setCookie("notification", true);
+            } else if (permission === "denied") {
+              $scope.notification = false;
+              return $scope.notificationDenied = true;
+            }
+          });
+        } else {
+          return $scope.setCookie("notification", true);
+        }
+      } else {
+        return $scope.setCookie("notification", false);
+      }
+    });
+    $scope.$watch("sound", function() {
+      return $scope.setCookie("sound", $scope.sound);
+    });
     $scope.start = function() {
       var firstSecond, that, time;
       $scope.running = true;
@@ -113,3 +163,18 @@ timer.controller("indexController", [
     };
   }
 ]);
+
+timer.directive('ngEnter', function() {
+  return function(scope, element, attrs) {
+    return element.bind('keydown keypress', function(event) {
+      if (event.which === 13) {
+        scope.$apply(function() {
+          return scope.$eval(attrs.ngEnter, {
+            'event': event
+          });
+        });
+        return event.preventDefault();
+      }
+    });
+  };
+});

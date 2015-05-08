@@ -14,13 +14,64 @@ timer.controller "indexController", ["$scope", ($scope) ->
 	$scope.running = false
 	$scope.paused = false
 
-	$scope.notification = true # todo: change
+	$scope.notification = false
 	$scope.notificationInstance = null
-	$scope.sound = true # todo: change
+	$scope.sound = false
 
 	$scope.setCookie = (key, value) ->
 		Cookies.set key, value,
 			expires: 2592000
+
+	# retrieve data from cookies
+	if hours = Cookies.get "hours"
+		$scope.hours = hours
+	if minutes = Cookies.get "minutes"
+		$scope.minutes = minutes
+	if seconds = Cookies.get "seconds"
+		$scope.seconds = seconds
+
+	# if Cookies.get "mode"
+	# 	model.set "mode", Cookies.get "mode"
+	# today = moment().format "YYYY MM DD"
+	# if Cookies.get("lastUsedDate") is today
+	# 	if Cookies.get "studyTime"
+	# 		model.set "studyTime", parseInt Cookies.get("studyTime")
+	# 	if Cookies.get "workTime"
+	# 		model.set "workTime", parseInt Cookies.get("workTime")
+	# 	if Cookies.get "playTime"
+	# 		model.set "playTime", parseInt Cookies.get("playTime")
+
+	if Cookies.get "notification"
+		$scope.notification = Cookies.get("notification") is "true"
+	if Cookies.get "sound"
+		$scope.sound = Cookies.get("sound") is "true"
+	# check notification permissions
+	unless Notification
+		return $scope.notificationDenied = true
+	permission = Notification.permission
+	switch permission
+		when "granted"
+			$scope.notificationGranted = true
+		when "denied"
+			$scope.notificationDenied = true
+
+	$scope.$watch "notification", ->
+		if $scope.notification
+			unless $scope.notificationGranted
+				Notification.requestPermission (permission) ->
+					if permission is "granted"
+						$scope.notificationGranted = true
+						$scope.notification = true
+						$scope.setCookie "notification", true
+					else if permission is "denied"
+						$scope.notification = false
+						$scope.notificationDenied = true
+			else
+				$scope.setCookie "notification", true
+		else
+			$scope.setCookie "notification", false
+	$scope.$watch "sound", ->
+		$scope.setCookie "sound", $scope.sound
 
 	$scope.start = ->
 		$scope.running = true
@@ -113,3 +164,11 @@ timer.controller "indexController", ["$scope", ($scope) ->
 	# 	today = moment().format "YYYY MM DD"
 	# 	$scope.setCookie "lastUsedDate", today
 ]
+
+timer.directive 'ngEnter', ->
+	(scope, element, attrs) ->
+		element.bind 'keydown keypress', (event) ->
+			if event.which == 13
+				scope.$apply ->
+					scope.$eval attrs.ngEnter, 'event': event
+				event.preventDefault()
