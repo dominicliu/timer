@@ -6,12 +6,11 @@ module.exports = (grunt) ->
 				tasks: ['coffee:compile']
 				options:
 					atBegin: true
-			emberTemplates:
-				files: ["<%= emberTemplates.compile.src %>"]
-				tasks: ["emberTemplates:compile"]
+			less:
+				files: ["<%= dirs.less %>/**/*.less"]
+				tasks: ["less:compile"]
 				options:
 					atBegin: true
-
 		coffee:
 			compile:
 				expand: true,
@@ -22,15 +21,17 @@ module.exports = (grunt) ->
 				ext: '.js'
 				options:
 					bare: true
+
 		dirs:
-			templates: "templates"
-		emberTemplates:
+			less: "public/stylesheets/less"
+		
+		less:
 			compile:
-				src: "<%= dirs.templates %>/**/*.hbs"
-				dest: "public/javascripts/templates.js"
+				files:
+					"public/stylesheets/css/timer.css": "<%= dirs.less %>/timer.less"
 				options:
-					templateBasePath: "<%= dirs.templates %>"
+					cleancss: true
 
 	grunt.loadNpmTasks "grunt-contrib-coffee"
-	grunt.loadNpmTasks "grunt-ember-templates"
 	grunt.loadNpmTasks "grunt-contrib-watch"
+	grunt.loadNpmTasks "grunt-contrib-less"

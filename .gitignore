@@ -33,3 +33,6 @@ public/javascripts/libs/bower_components
 # Chrome Plugin
 chrome.crx
 chrome.pem
+
+*.sublime-project
+*.sublime-workspace
