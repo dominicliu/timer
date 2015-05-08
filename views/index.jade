@@ -1,5 +1,71 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	doctype html(lang='en')
+	head
+		meta(charset='utf-8')
+		title timer
+		link(rel='shortcut icon', href='images/favicon.ico')
+		script(src='javascripts/libs/bower_components/jquery/dist/jquery.min.js')
+		script(src='javascripts/libs/bower_components/angular/angular.min.js')
+		link(rel='stylesheet', href='javascripts/libs/bower_components/bootstrap/dist/css/bootstrap.min.css')
+		script(src='javascripts/libs/bower_components/bootstrap/dist/js/bootstrap.min.js')
+		link(rel='stylesheet', type='text/css', href='stylesheets/css/timer.css')
+		script(src='javascripts/libs/countdown.min.js')
+		script(src='javascripts/libs/bower_components/moment/min/moment.min.js')
+		script(src='javascripts/libs/bower_components/cookies-js/dist/cookies.min.js')
+		script(src='javascripts/timer.js')
+		link(rel='prefetch', href='images/favicon.ico')
+		link(rel='prefetch', href='images/bell.mp3')
+	body(ng-app='timer')
+		.text-center(ng-controller='indexController')
+			h1 timer
+			table.text-center
+				tbody
+					tr
+						td
+							input#hours(type='text', ng-model='hours', ng-disabled='running', ng-enter='start()')
+						td.colon :
+						td
+							input#minutes(type='text', ng-model='minutes', ng-disabled='running', ng-enter='start()', ng-auto-focus='')
+						td.colon :
+						td
+							input#seconds(type='text', ng-model='seconds', ng-disabled='running', ng-enter='start()')
+					tr
+						td.caption hours
+						td
+						td.caption minutes
+						td
+						td.caption seconds
+			p
+				button(ng-click='start()', ng-disabled='running')
+					img.icon(src='images/start.jpg')
+					| start
+				button(ng-click='pause()', ng-disabled='!running')
+					img.icon(src='images/pause.jpg')
+					| pause
+				button(ng-click='stop()', ng-disabled='!(running || paused)')
+					img.icon(src='images/stop.jpg')
+					| stop
+				button(ng-click='restart()', ng-disabled='notRunningOrPaused()')
+					img.icon(src='images/restart.jpg')
+					| restart
+				button(ng-click='snooze()')
+					img.icon(src='images/snooze.jpg')
+					| snooze
+			p
+				input#notification(type='checkbox', ng-model='notification', ng-disabled='notificationDenied')
+				label(for='notification') notification
+				| &nbsp;&nbsp;&nbsp;&nbsp;
+				input#sound(type='checkbox', ng-model='sound')
+				label(for='sound') sound
+			.btn-group(role='group', aria-label='...')
+				button.btn(type='button', ng-class="{ 'btn-primary': mode === 'study', 'btn-default': mode !== 'study' }", ng-click="setMode('study')") study
+				button.btn(type='button', ng-class="{ 'btn-primary': mode === 'work', 'btn-default': mode !== 'work' }", ng-click="setMode('work')") work
+				button.btn(type='button', ng-class="{ 'btn-primary': mode === 'play', 'btn-default': mode !== 'play' }", ng-click="setMode('play')") play
+			.space
+			.space
+			.space
+			p
+				| study: {{formatTime(studyTime)}} &nbsp;&nbsp; work: {{formatTime(workTime)}} &nbsp;&nbsp; play: {{formatTime(playTime)}}
+			p.copyright &copy; 2014-2015 Dominic Liu

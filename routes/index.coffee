@@ -3,7 +3,7 @@ router = express.Router()
 
 # GET home page. 
 router.get "/", (req, res) ->
-	res.render "public/index.html"
+	res.render "index"
 	return
 
 module.exports = router
