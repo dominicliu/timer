@@ -6,7 +6,11 @@ module.exports = (grunt) ->
 				tasks: ['coffee:compile']
 				options:
 					atBegin: true
-
+			less:
+				files: ["<%= dirs.less %>/**/*.less"]
+				tasks: ["less:compile"]
+				options:
+					atBegin: true
 		coffee:
 			compile:
 				expand: true,
@@ -18,5 +22,16 @@ module.exports = (grunt) ->
 				options:
 					bare: true
 
+		dirs:
+			less: "public/stylesheets/less"
+		
+		less:
+			compile:
+				files:
+					"public/stylesheets/css/timer.css": "<%= dirs.less %>/timer.less"
+				options:
+					cleancss: true
+
 	grunt.loadNpmTasks "grunt-contrib-coffee"
 	grunt.loadNpmTasks "grunt-contrib-watch"
+	grunt.loadNpmTasks "grunt-contrib-less"
