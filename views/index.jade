@@ -38,19 +38,19 @@ block content
 						td
 						td.caption seconds
 			p
-				button(ng-click='start()', ng-disabled='running')
+				button#start(ng-click='start()', ng-disabled='running')
 					img.icon(src='images/start.jpg')
 					| start
-				button(ng-click='pause()', ng-disabled='!running')
+				button#pause(ng-click='pause()', ng-disabled='!running')
 					img.icon(src='images/pause.jpg')
 					| pause
-				button(ng-click='stop()', ng-disabled='!(running || paused)')
+				button#stop(ng-click='stop()', ng-disabled='!(running || paused)')
 					img.icon(src='images/stop.jpg')
 					| stop
-				button(ng-click='restart()', ng-disabled='notRunningOrPaused()')
+				button#restart(ng-click='restart()', ng-disabled='notRunningOrPaused()')
 					img.icon(src='images/restart.jpg')
 					| restart
-				button(ng-click='snooze()')
+				button#snooze(ng-click='snooze()')
 					img.icon(src='images/snooze.jpg')
 					| snooze
 			p
