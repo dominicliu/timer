@@ -28,6 +28,12 @@ body,
 input,
 select,
 textarea {
+  font-family: Arial, Helvetica, sans-serif;
+}
+.wf-active body,
+.wf-active input,
+.wf-active select,
+.wf-active textarea {
   font-family: "Lato", Arial, Helvetica, sans-serif;
 }
 body ::selection {
