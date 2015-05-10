@@ -53,14 +53,15 @@ timer.controller "indexController", ["$scope", ($scope) ->
 	if Cookies.get "sound"
 		$scope.sound = Cookies.get("sound") is "true"
 	# check notification permissions
-	unless Notification
-		return $scope.notificationDenied = true
-	permission = Notification.permission
-	switch permission
-		when "granted"
-			$scope.notificationGranted = true
-		when "denied"
-			$scope.notificationDenied = true
+	unless Notification?
+		$scope.notificationDenied = true
+	else
+		permission = Notification.permission
+		switch permission
+			when "granted"
+				$scope.notificationGranted = true
+			when "denied"
+				$scope.notificationDenied = true
 
 	window.onbeforeunload = ->
 		$scope.saveTimes()
@@ -198,7 +199,10 @@ timer.controller "indexController", ["$scope", ($scope) ->
 		today = moment().format "YYYY MM DD"
 		$scope.setCookie "lastUsedDate", today
 	$scope.formatTime = (time) ->
-		duration = moment.duration(time / 1000, "seconds")
+		offset = 0
+		if time % 1000 > 800
+			offset = 1
+		duration = moment.duration(time / 1000 + offset, "seconds")
 		duration.hours() + ":" + duration.minutes() + ":" + duration.seconds()
 ]
 

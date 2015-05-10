@@ -58,16 +58,17 @@ timer.controller("indexController", [
     if (Cookies.get("sound")) {
       $scope.sound = Cookies.get("sound") === "true";
     }
-    if (!Notification) {
-      return $scope.notificationDenied = true;
-    }
-    permission = Notification.permission;
-    switch (permission) {
-      case "granted":
-        $scope.notificationGranted = true;
-        break;
-      case "denied":
-        $scope.notificationDenied = true;
+    if (typeof Notification === "undefined" || Notification === null) {
+      $scope.notificationDenied = true;
+    } else {
+      permission = Notification.permission;
+      switch (permission) {
+        case "granted":
+          $scope.notificationGranted = true;
+          break;
+        case "denied":
+          $scope.notificationDenied = true;
+      }
     }
     window.onbeforeunload = function() {
       $scope.saveTimes();
@@ -227,8 +228,12 @@ timer.controller("indexController", [
       return $scope.setCookie("lastUsedDate", today);
     };
     return $scope.formatTime = function(time) {
-      var duration;
-      duration = moment.duration(time / 1000, "seconds");
+      var duration, offset;
+      offset = 0;
+      if (time % 1000 > 800) {
+        offset = 1;
+      }
+      duration = moment.duration(time / 1000 + offset, "seconds");
       return duration.hours() + ":" + duration.minutes() + ":" + duration.seconds();
     };
   }

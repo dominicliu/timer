@@ -3,9 +3,11 @@ _ = require "underscore"
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
 
+url = "http://localhost:3000/"
+
 describe "timer", ->
 	beforeEach ->
-		browser.get "http://localhost:3000/"
+		browser.get url
 
 	hours = element(By.model("hours"))
 	minutes = element(By.model("minutes"))
@@ -54,11 +56,11 @@ describe "timer", ->
 	it "should start, and then stop", ->
 		isStopped()
 		minutes.clear().sendKeys 0
-		seconds.clear().sendKeys 3
+		seconds.clear().sendKeys 10
 		start.click()
 
 		isRunning()
-		browser.sleep 4000
+		browser.sleep 11000
 		isStopped()
 
 	it "should save cookies after refresh", ->
@@ -68,7 +70,7 @@ describe "timer", ->
 
 		start.click()
 		stop.click()
-		browser.refresh()
+		browser.get url
 		expect seconds.getAttribute "value"
 			.toEqual numSeconds.toString()
 
@@ -89,9 +91,9 @@ describe "timer", ->
 		testMode work, workTime
 		testMode play, playTime
 
-	iit "should accept enter key", ->
+	it "should accept enter key", ->
 		minutes.clear().sendKeys 0
-		seconds.clear().sendKeys 3
+		seconds.clear().sendKeys 20
 		seconds.sendKeys protractor.Key.ENTER
 		isRunning()
 		stop.click()
