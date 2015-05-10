@@ -80,6 +80,12 @@ timer.controller "indexController", ["$scope", ($scope) ->
 		$scope.saveTimes()
 	, m.diff(moment())
 
+	window.clearTimes = ->
+		$scope.$apply ->
+			$scope.studyTime = 0
+			$scope.workTime = 0
+			$scope.playTime = 0
+
 	$scope.$watch "notification", ->
 		if $scope.notification
 			unless $scope.notificationGranted

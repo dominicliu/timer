@@ -1,4 +1,5 @@
 async = require "async"
+_ = require "underscore"
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
 
@@ -16,43 +17,81 @@ describe "timer", ->
 	restart = element By.id "restart"
 	snooze = element By.id "snooze"
 
-	it "should get started", (done) ->
-		isStopped = ->
-			expect hours.getAttribute("disabled")
-				.toBe(null)
-			expect minutes.getAttribute("disabled")
-				.toBe(null)
-			expect seconds.getAttribute("disabled")
-				.toBe(null)
+	study = element By.id "study"
+	work = element By.id "work"
+	play = element By.id "play"
 
-			expect start.getAttribute("disabled")
-				.toBe(null)
-			expect pause.getAttribute("disabled")
-				.toBe("true")
-			expect stop.getAttribute("disabled")
-				.toBe("true")
-			expect restart.getAttribute("disabled")
-				.toBe(null)
-			expect snooze.getAttribute("disabled")
-				.toBe(null)
+	studyTime = element By.id "studyTime"
+	workTime = element By.id "workTime"
+	playTime = element By.id "playTime"
+
+	expectDisabled = (elem, disabled) ->
+		expect elem.getAttribute("disabled")
+			.toBe(disabled)
+
+	isStopped = ->
+		expectDisabled hours, null
+		expectDisabled minutes, null
+		expectDisabled seconds, null
+
+		expectDisabled start, null
+		expectDisabled pause, "true"
+		expectDisabled stop, "true"
+		expectDisabled restart, null
+		expectDisabled snooze, null
+
+	isRunning = ->
+		expectDisabled hours, "true"
+		expectDisabled minutes, "true"
+		expectDisabled seconds, "true"
+
+		expectDisabled start, "true"
+		expectDisabled pause, null
+		expectDisabled stop, null
+		expectDisabled restart, null
+		expectDisabled snooze, null
+
+	it "should start, and then stop", ->
 		isStopped()
-
 		minutes.clear().sendKeys 0
 		seconds.clear().sendKeys 3
 		start.click()
 
-		expect hours.getAttribute("disabled")
-			.toBe("true")
-		expect minutes.getAttribute("disabled")
-			.toBe("true")
-		expect seconds.getAttribute("disabled")
-			.toBe("true")
-		expect start.getAttribute("disabled")
-			.toBe("true")
+		isRunning()
+		browser.sleep 4000
+		isStopped()
 
-		setTimeout ->
-			isStopped()
-			setTimeout done, 500 # all the get Attribute are promises
-		, 4000
+	it "should save cookies after refresh", ->
+		numSeconds = _.random(10, 59)
+		minutes.clear().sendKeys 0
+		seconds.clear().sendKeys numSeconds
 
-	it "should save cookies after refresh"
+		start.click()
+		stop.click()
+		browser.refresh()
+		expect seconds.getAttribute "value"
+			.toEqual numSeconds.toString()
+
+	it "should work on the modes", ->
+		testMode = (button, timeElement) ->
+			minutes.clear().sendKeys 0
+			seconds.clear().sendKeys 3
+			button.click()
+			start.click()
+
+			browser.sleep 5000
+			expect timeElement.getText()
+				.toEqual "0:0:3"
+
+		browser.executeScript "clearTimes()"
+
+		testMode study, studyTime
+		testMode work, workTime
+		testMode play, playTime
+
+	iit "should accept enter key", ->
+		minutes.clear().sendKeys 0
+		seconds.clear().sendKeys 3
+		seconds.sendKeys protractor.Key.ENTER
+		isRunning()
+		stop.click()

@@ -89,6 +89,13 @@ timer.controller("indexController", [
       $scope.playTime = 0;
       return $scope.saveTimes();
     }, m.diff(moment()));
+    window.clearTimes = function() {
+      return $scope.$apply(function() {
+        $scope.studyTime = 0;
+        $scope.workTime = 0;
+        return $scope.playTime = 0;
+      });
+    };
     $scope.$watch("notification", function() {
       if ($scope.notification) {
         if (!$scope.notificationGranted) {
