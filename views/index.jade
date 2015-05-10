@@ -38,19 +38,19 @@ block content
 						td
 						td.caption seconds
 			p
-				button(ng-click='start()', ng-disabled='running')
+				button#start(ng-click='start()', ng-disabled='running')
 					img.icon(src='images/start.jpg')
 					| start
-				button(ng-click='pause()', ng-disabled='!running')
+				button#pause(ng-click='pause()', ng-disabled='!running')
 					img.icon(src='images/pause.jpg')
 					| pause
-				button(ng-click='stop()', ng-disabled='!(running || paused)')
+				button#stop(ng-click='stop()', ng-disabled='!(running || paused)')
 					img.icon(src='images/stop.jpg')
 					| stop
-				button(ng-click='restart()', ng-disabled='notRunningOrPaused()')
+				button#restart(ng-click='restart()', ng-disabled='notRunningOrPaused()')
 					img.icon(src='images/restart.jpg')
 					| restart
-				button(ng-click='snooze()')
+				button#snooze(ng-click='snooze()')
 					img.icon(src='images/snooze.jpg')
 					| snooze
 			p
@@ -60,12 +60,24 @@ block content
 				input#sound(type='checkbox', ng-model='sound')
 				label(for='sound') sound
 			.btn-group(role='group', aria-label='...')
-				button.btn(type='button', ng-class="{ 'btn-primary': mode === 'study', 'btn-default': mode !== 'study' }", ng-click="setMode('study')") study
-				button.btn(type='button', ng-class="{ 'btn-primary': mode === 'work', 'btn-default': mode !== 'work' }", ng-click="setMode('work')") work
-				button.btn(type='button', ng-class="{ 'btn-primary': mode === 'play', 'btn-default': mode !== 'play' }", ng-click="setMode('play')") play
+				button.btn#study(type='button', ng-class="{ 'btn-primary': mode === 'study', 'btn-default': mode !== 'study' }", ng-click="setMode('study')") study
+				button.btn#work(type='button', ng-class="{ 'btn-primary': mode === 'work', 'btn-default': mode !== 'work' }", ng-click="setMode('work')") work
+				button.btn#play(type='button', ng-class="{ 'btn-primary': mode === 'play', 'btn-default': mode !== 'play' }", ng-click="setMode('play')") play
 			.space
 			.space
 			.space
 			p
-				| study: {{formatTime(studyTime)}} &nbsp;&nbsp; work: {{formatTime(workTime)}} &nbsp;&nbsp; play: {{formatTime(playTime)}}
+				| study: 
+				span#studyTime(ng-dblclick="editTime('study')", ng-hide="isEditingTime.study") {{formatTime(studyTime)}}
+				input#studyTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.study", ng-model="editingTime.study", ng-enter="finishEditingTime('study')", ng-blur="finishEditingTime('study')", make-focus="isEditingTime.study")
+				| &nbsp;&nbsp;
+				| work: 
+				span#workTime(ng-dblclick="editTime('work')", ng-hide="isEditingTime.work") {{formatTime(workTime)}}
+				input#workTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.work", ng-model="editingTime.work", ng-enter="finishEditingTime('work')", ng-blur="finishEditingTime('work')", make-focus="isEditingTime.work")
+				| &nbsp;&nbsp;
+				| play: 
+				span#playTime(ng-dblclick="editTime('play')", ng-hide="isEditingTime.play") {{formatTime(playTime)}}
+				input#playTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.play", ng-model="editingTime.play", ng-enter="finishEditingTime('play')", ng-blur="finishEditingTime('play')", make-focus="isEditingTime.play")
 			p.copyright &copy; 2014-2015 Dominic Liu
+		script(src='javascripts/libs/webfont.js')
+		script(src='javascripts/fonts.js')

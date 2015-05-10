@@ -58,16 +58,17 @@ timer.controller("indexController", [
     if (Cookies.get("sound")) {
       $scope.sound = Cookies.get("sound") === "true";
     }
-    if (!Notification) {
-      return $scope.notificationDenied = true;
-    }
-    permission = Notification.permission;
-    switch (permission) {
-      case "granted":
-        $scope.notificationGranted = true;
-        break;
-      case "denied":
-        $scope.notificationDenied = true;
+    if (typeof Notification === "undefined" || Notification === null) {
+      $scope.notificationDenied = true;
+    } else {
+      permission = Notification.permission;
+      switch (permission) {
+        case "granted":
+          $scope.notificationGranted = true;
+          break;
+        case "denied":
+          $scope.notificationDenied = true;
+      }
     }
     window.onbeforeunload = function() {
       $scope.saveTimes();
@@ -89,6 +90,13 @@ timer.controller("indexController", [
       $scope.playTime = 0;
       return $scope.saveTimes();
     }, m.diff(moment()));
+    window.clearTimes = function() {
+      return $scope.$apply(function() {
+        $scope.studyTime = 0;
+        $scope.workTime = 0;
+        return $scope.playTime = 0;
+      });
+    };
     $scope.$watch("notification", function() {
       if ($scope.notification) {
         if (!$scope.notificationGranted) {
@@ -219,10 +227,42 @@ timer.controller("indexController", [
       today = moment().format("YYYY MM DD");
       return $scope.setCookie("lastUsedDate", today);
     };
-    return $scope.formatTime = function(time) {
-      var duration;
-      duration = moment.duration(time / 1000, "seconds");
+    $scope.formatTime = function(time) {
+      var duration, offset;
+      offset = 0;
+      if (time % 1000 > 800) {
+        offset = 1;
+      }
+      duration = moment.duration(time / 1000 + offset, "seconds");
       return duration.hours() + ":" + duration.minutes() + ":" + duration.seconds();
+    };
+    $scope.editingTime = {
+      study: "",
+      work: null,
+      play: null
+    };
+    $scope.isEditingTime = {
+      study: false,
+      work: false,
+      play: false
+    };
+    $scope.editTime = function(mode) {
+      $scope.editingTime[mode] = $scope.formatTime($scope["" + mode + "Time"]);
+      return $scope.isEditingTime[mode] = true;
+    };
+    return $scope.finishEditingTime = function(mode) {
+      var number, numbers, totalTime, _i, _len;
+      $scope.isEditingTime[mode] = false;
+      if (!$scope.editingTime[mode]) {
+        return;
+      }
+      numbers = $scope.editingTime[mode].match(/\d+/g);
+      totalTime = 0;
+      for (_i = 0, _len = numbers.length; _i < _len; _i++) {
+        number = numbers[_i];
+        totalTime = totalTime * 60 + ((parseInt(number)) || 0);
+      }
+      return $scope["" + mode + "Time"] = totalTime * 1000;
     };
   }
 ]);
@@ -246,5 +286,18 @@ timer.directive('ngAutoFocus', function() {
   return function(scope, element, attrs) {
     element[0].focus();
     return element[0].selectionStart = element[0].selectionEnd = element[0].value.length;
+  };
+});
+
+timer.directive('makeFocus', function($timeout) {
+  'use strict';
+  return function(scope, elem, attrs) {
+    return scope.$watch(attrs.makeFocus, function(newVal) {
+      if (newVal) {
+        return $timeout((function() {
+          return elem[0].focus();
+        }), 0, false);
+      }
+    });
   };
 });
