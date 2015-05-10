@@ -227,7 +227,7 @@ timer.controller("indexController", [
       today = moment().format("YYYY MM DD");
       return $scope.setCookie("lastUsedDate", today);
     };
-    return $scope.formatTime = function(time) {
+    $scope.formatTime = function(time) {
       var duration, offset;
       offset = 0;
       if (time % 1000 > 800) {
@@ -235,6 +235,34 @@ timer.controller("indexController", [
       }
       duration = moment.duration(time / 1000 + offset, "seconds");
       return duration.hours() + ":" + duration.minutes() + ":" + duration.seconds();
+    };
+    $scope.editingTime = {
+      study: "",
+      work: null,
+      play: null
+    };
+    $scope.isEditingTime = {
+      study: false,
+      work: false,
+      play: false
+    };
+    $scope.editTime = function(mode) {
+      $scope.editingTime[mode] = $scope.formatTime($scope["" + mode + "Time"]);
+      return $scope.isEditingTime[mode] = true;
+    };
+    return $scope.finishEditingTime = function(mode) {
+      var number, numbers, totalTime, _i, _len;
+      $scope.isEditingTime[mode] = false;
+      if (!$scope.editingTime[mode]) {
+        return;
+      }
+      numbers = $scope.editingTime[mode].match(/\d+/g);
+      totalTime = 0;
+      for (_i = 0, _len = numbers.length; _i < _len; _i++) {
+        number = numbers[_i];
+        totalTime = totalTime * 60 + ((parseInt(number)) || 0);
+      }
+      return $scope["" + mode + "Time"] = totalTime * 1000;
     };
   }
 ]);
@@ -258,5 +286,18 @@ timer.directive('ngAutoFocus', function() {
   return function(scope, element, attrs) {
     element[0].focus();
     return element[0].selectionStart = element[0].selectionEnd = element[0].value.length;
+  };
+});
+
+timer.directive('makeFocus', function($timeout) {
+  'use strict';
+  return function(scope, elem, attrs) {
+    return scope.$watch(attrs.makeFocus, function(newVal) {
+      if (newVal) {
+        return $timeout((function() {
+          return elem[0].focus();
+        }), 0, false);
+      }
+    });
   };
 });

@@ -67,11 +67,17 @@ block content
 			.space
 			.space
 			p
-				| study: <span id="studyTime">{{formatTime(studyTime)}}</span>
+				| study: 
+				span#studyTime(ng-dblclick="editTime('study')", ng-hide="isEditingTime.study") {{formatTime(studyTime)}}
+				input#studyTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.study", ng-model="editingTime.study", ng-enter="finishEditingTime('study')", ng-blur="finishEditingTime('study')", make-focus="isEditingTime.study")
 				| &nbsp;&nbsp;
-				| work: <span id="workTime">{{formatTime(workTime)}}</span>
+				| work: 
+				span#workTime(ng-dblclick="editTime('work')", ng-hide="isEditingTime.work") {{formatTime(workTime)}}
+				input#workTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.work", ng-model="editingTime.work", ng-enter="finishEditingTime('work')", ng-blur="finishEditingTime('work')", make-focus="isEditingTime.work")
 				| &nbsp;&nbsp;
-				| play: <span id="playTime">{{formatTime(playTime)}}</span>
+				| play: 
+				span#playTime(ng-dblclick="editTime('play')", ng-hide="isEditingTime.play") {{formatTime(playTime)}}
+				input#playTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.play", ng-model="editingTime.play", ng-enter="finishEditingTime('play')", ng-blur="finishEditingTime('play')", make-focus="isEditingTime.play")
 			p.copyright &copy; 2014-2015 Dominic Liu
 		script(src='javascripts/libs/webfont.js')
 		script(src='javascripts/fonts.js')

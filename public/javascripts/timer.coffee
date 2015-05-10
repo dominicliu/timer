@@ -204,6 +204,28 @@ timer.controller "indexController", ["$scope", ($scope) ->
 			offset = 1
 		duration = moment.duration(time / 1000 + offset, "seconds")
 		duration.hours() + ":" + duration.minutes() + ":" + duration.seconds()
+
+	$scope.editingTime =
+		study: ""
+		work: null
+		play: null
+	$scope.isEditingTime =
+		study: false
+		work: false
+		play: false
+	$scope.editTime = (mode) ->
+		$scope.editingTime[mode] = $scope.formatTime($scope["#{mode}Time"])
+		$scope.isEditingTime[mode] = true
+
+	$scope.finishEditingTime = (mode) ->
+		$scope.isEditingTime[mode] = false
+		unless $scope.editingTime[mode]
+			return
+		numbers = $scope.editingTime[mode].match(/\d+/g)
+		totalTime = 0
+		for number in numbers
+			totalTime = totalTime * 60 + ((parseInt number) or 0)
+		$scope["#{mode}Time"] = totalTime * 1000
 ]
 
 timer.directive 'ngEnter', ->
@@ -218,3 +240,12 @@ timer.directive 'ngAutoFocus', ->
 	(scope, element, attrs) ->
 		element[0].focus()
 		element[0].selectionStart = element[0].selectionEnd = element[0].value.length # focus at the end
+
+timer.directive 'makeFocus', ($timeout) ->
+	'use strict'
+	(scope, elem, attrs) ->
+		scope.$watch attrs.makeFocus, (newVal) ->
+			if newVal
+				$timeout (->
+					elem[0].focus()
+				), 0, false

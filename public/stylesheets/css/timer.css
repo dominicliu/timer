@@ -116,3 +116,6 @@ body p.copyright {
 body .space {
   height: 5px;
 }
+body input.edit-time {
+  width: 70px;
+}

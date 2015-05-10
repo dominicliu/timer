@@ -27,6 +27,10 @@ describe "timer", ->
 	workTime = element By.id "workTime"
 	playTime = element By.id "playTime"
 
+	studyTimeEditing = element By.id "studyTimeEditing"
+	workTimeEditing = element By.id "workTimeEditing"
+	playTimeEditing = element By.id "playTimeEditing"
+
 	expectDisabled = (elem, disabled) ->
 		expect elem.getAttribute("disabled")
 			.toBe(disabled)
@@ -97,3 +101,27 @@ describe "timer", ->
 		seconds.sendKeys protractor.Key.ENTER
 		isRunning()
 		stop.click()
+
+	it "should edit times", ->
+		test = (timeElem, editingElem, method) ->
+			browser.actions().doubleClick(timeElem).perform()
+			# should have focus
+			expect browser.driver.switchTo().activeElement().getAttribute('id')
+				.toEqual editingElem.getAttribute("id")
+			# press enter
+			time = _.random(23) + ":" + _.random(59) + ":" + _.random(59)
+			editingElem.clear().sendKeys time
+			if method is "enter"
+				editingElem.sendKeys protractor.Key.ENTER
+			else if method is "blur"
+				hours.click()
+			# shoud have time
+			expect timeElem.getText()
+				.toEqual time
+		test studyTime, studyTimeEditing, "enter"
+		test workTime, workTimeEditing, "enter"
+		test playTime, playTimeEditing, "enter"
+
+		test studyTime, studyTimeEditing, "blur"
+		test workTime, workTimeEditing, "blur"
+		test playTime, playTimeEditing, "blur"
