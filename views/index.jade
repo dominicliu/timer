@@ -18,66 +18,59 @@ block content
 		link(rel='prefetch', href='images/favicon.ico')
 		link(rel='prefetch', href='images/bell.mp3')
 	body(ng-app='timer')
-		.text-center(ng-controller='indexController')
-			h1 timer
-			table.text-center
-				tbody
-					tr
-						td
-							input#hours(type='text', ng-model='hours', ng-disabled='running', ng-enter='start()')
-						td.colon :
-						td
-							input#minutes(type='text', ng-model='minutes', ng-disabled='running', ng-enter='start()', ng-auto-focus='')
-						td.colon :
-						td
-							input#seconds(type='text', ng-model='seconds', ng-disabled='running', ng-enter='start()')
-					tr
-						td.caption hours
-						td
-						td.caption minutes
-						td
-						td.caption seconds
-			p
-				button#start(ng-click='start()', ng-disabled='running')
-					img.icon(src='images/start.jpg')
-					| start
-				button#pause(ng-click='pause()', ng-disabled='!running')
-					img.icon(src='images/pause.jpg')
-					| pause
-				button#stop(ng-click='stop()', ng-disabled='!(running || paused)')
-					img.icon(src='images/stop.jpg')
-					| stop
-				button#restart(ng-click='restart()', ng-disabled='notRunningOrPaused()')
-					img.icon(src='images/restart.jpg')
-					| restart
-				button#snooze(ng-click='snooze()')
-					img.icon(src='images/snooze.jpg')
-					| snooze
-			p
-				input#notification(type='checkbox', ng-model='notification', ng-disabled='notificationDenied')
-				label(for='notification') notification
-				| &nbsp;&nbsp;&nbsp;&nbsp;
-				input#sound(type='checkbox', ng-model='sound')
-				label(for='sound') sound
-			.btn-group(role='group', aria-label='...')
-				button.btn#study(type='button', ng-class="{ 'btn-primary': mode === 'study', 'btn-default': mode !== 'study' }", ng-click="setMode('study')") study
-				button.btn#work(type='button', ng-class="{ 'btn-primary': mode === 'work', 'btn-default': mode !== 'work' }", ng-click="setMode('work')") work
-				button.btn#play(type='button', ng-class="{ 'btn-primary': mode === 'play', 'btn-default': mode !== 'play' }", ng-click="setMode('play')") play
-			.space
-			.space
-			.space
-			p(ng-cloak)
-				| study: 
-				span#studyTime(ng-dblclick="editTime('study')", ng-hide="isEditingTime.study") {{formatTime(studyTime)}}
-				input#studyTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.study", ng-model="editingTime.study", ng-enter="finishEditingTime('study')", ng-blur="finishEditingTime('study')", make-focus="isEditingTime.study")
-				| &nbsp;&nbsp;
-				| work: 
-				span#workTime(ng-dblclick="editTime('work')", ng-hide="isEditingTime.work") {{formatTime(workTime)}}
-				input#workTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.work", ng-model="editingTime.work", ng-enter="finishEditingTime('work')", ng-blur="finishEditingTime('work')", make-focus="isEditingTime.work")
-				| &nbsp;&nbsp;
-				| play: 
-				span#playTime(ng-dblclick="editTime('play')", ng-hide="isEditingTime.play") {{formatTime(playTime)}}
-				input#playTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.play", ng-model="editingTime.play", ng-enter="finishEditingTime('play')", ng-blur="finishEditingTime('play')", make-focus="isEditingTime.play")
-			p.copyright &copy; 2014-2015 Dominic Liu
+		header
+		.container
+			main(ng-controller='indexController')
+				.row
+					.col-lg-3.text-center
+						img#logo(src="images/timer.png")
+					.col-lg-9#right
+						.row.text-center#times
+							.col-xs-4
+								input#hours(type='text', ng-model='hours', ng-disabled='running', ng-enter='start()')
+								.caption hours
+							.col-xs-4
+								input#minutes(type='text', ng-model='minutes', ng-disabled='running', ng-enter='start()', ng-auto-focus='')
+								.caption minutes
+							.col-xs-4
+								input#seconds(type='text', ng-model='seconds', ng-disabled='running', ng-enter='start()')
+								.caption seconds
+						p
+							button.btn.btn-primary.form-control#start(ng-click='start()', ng-disabled='running')
+								| start
+							button#pause(ng-click='pause()', ng-disabled='!running')
+								| pause
+							button#stop(ng-click='stop()', ng-disabled='!(running || paused)')
+								| stop
+							button#restart(ng-click='restart()', ng-disabled='notRunningOrPaused()')
+								| restart
+							button#snooze(ng-click='snooze()')
+								| snooze
+						p
+							input#notification(type='checkbox', ng-model='notification', ng-disabled='notificationDenied')
+							label(for='notification') notification
+							| &nbsp;&nbsp;&nbsp;&nbsp;
+							input#sound(type='checkbox', ng-model='sound')
+							label(for='sound') sound
+						.btn-group(role='group', aria-label='...')
+							button.btn#study(type='button', ng-class="{ 'btn-primary': mode === 'study', 'btn-default': mode !== 'study' }", ng-click="setMode('study')") study
+							button.btn#work(type='button', ng-class="{ 'btn-primary': mode === 'work', 'btn-default': mode !== 'work' }", ng-click="setMode('work')") work
+							button.btn#play(type='button', ng-class="{ 'btn-primary': mode === 'play', 'btn-default': mode !== 'play' }", ng-click="setMode('play')") play
+						.space
+						.space
+						.space
+						p(ng-cloak)
+							| study: 
+							span#studyTime(ng-dblclick="editTime('study')", ng-hide="isEditingTime.study") {{formatTime(studyTime)}}
+							input#studyTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.study", ng-model="editingTime.study", ng-enter="finishEditingTime('study')", ng-blur="finishEditingTime('study')", make-focus="isEditingTime.study")
+							| &nbsp;&nbsp;
+							| work: 
+							span#workTime(ng-dblclick="editTime('work')", ng-hide="isEditingTime.work") {{formatTime(workTime)}}
+							input#workTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.work", ng-model="editingTime.work", ng-enter="finishEditingTime('work')", ng-blur="finishEditingTime('work')", make-focus="isEditingTime.work")
+							| &nbsp;&nbsp;
+							| play: 
+							span#playTime(ng-dblclick="editTime('play')", ng-hide="isEditingTime.play") {{formatTime(playTime)}}
+							input#playTimeEditing(class="edit-time" type="text", ng-show="isEditingTime.play", ng-model="editingTime.play", ng-enter="finishEditingTime('play')", ng-blur="finishEditingTime('play')", make-focus="isEditingTime.play")
+				p.copyright &copy; 2014-2015 Dominic Liu
 		script(src='javascripts/libs/webfont.js')
 		script(src='javascripts/fonts.js')
