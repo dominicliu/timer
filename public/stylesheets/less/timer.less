@@ -68,16 +68,13 @@ body {
 		background: @gray; /* Firefox */
 		color: @white;
 	}
-
-	header {
-		height: 200px;
-	}
 	
 	.container {
 		max-width: 870px;
 	}
 
 	main {
+		margin: 200px 0;
 		background-color: @white;
 		padding: 70px;
 
@@ -142,6 +139,19 @@ body {
 			}
 		}
 
+		.buttons {
+			margin-left: -5px;
+			margin-right: -5px;
+			margin-bottom: 20px;
+
+			> div {
+				padding: 0px 5px;
+			}
+			.btn {
+				width: 100%;
+			}
+		}
+
 		button {
 			background-color: transparent;
 			border: none;
@@ -153,14 +163,17 @@ body {
 
 			&.btn {
 				transition: background-color 0.5s;
+				outline: none;
 			}
 
 			&.btn-primary {
 				background-color: @orange;
 				border: 0px;
 
-				&:hover {
-					background-color: fade(@orange, 80%);
+				&:hover, &:focus, &:active {
+					background-color: desaturate(darken(@orange, 10%), 10%);
+					box-shadow: none;
+					outline: none !important;
 				}
 
 				&:disabled {
@@ -168,23 +181,39 @@ body {
 				}
 			}
 
+			&.btn-default {
+				background-color: @coffee-light;
+				color: @coffee-dark;
+				border: none;
+
+				&:hover, &:focus, &:active {
+					background-color: lighten(@coffee-light, 3%);
+					box-shadow: none;
+					outline: none !important;
+				}
+
+				&:disabled {
+					background-color: fade(@coffee-light, 50%);
+				}
+			}
+
 			&:focus {
 				outline: none;
 			}
 
-			&:disabled {
-				opacity: 0.3;
-			}
+			// &:disabled {
+			// 	opacity: 0.3;
+			// }
 
-			&:last-child {
-				margin-right: 0px;
-			}
+			// &:last-child {
+			// 	margin-right: 0px;
+			// }
 
-			img.icon {
-				width: 13px;
-				height: 13px;
-				margin-right: 7px;
-			}
+			// img.icon {
+			// 	width: 13px;
+			// 	height: 13px;
+			// 	margin-right: 7px;
+			// }
 		}
 
 		label {
@@ -198,7 +227,8 @@ body {
 		}
 
 		p.copyright {
-			margin-top: 100px;
+			margin-top: 20px;
+			margin-bottom: 0px;
 			font-size: 14px;
 			color: @gray;
 		}

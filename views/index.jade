@@ -18,11 +18,10 @@ block content
 		link(rel='prefetch', href='images/favicon.ico')
 		link(rel='prefetch', href='images/bell.mp3')
 	body(ng-app='timer')
-		header
 		.container
 			main(ng-controller='indexController')
 				.row
-					.col-lg-3.text-center
+					.col-lg-3.text-center#left
 						img#logo(src="images/timer.png")
 					.col-lg-9#right
 						.row.text-center#times
@@ -38,14 +37,19 @@ block content
 						p
 							button.btn.btn-primary.form-control#start(ng-click='start()', ng-disabled='running')
 								| start
-							button#pause(ng-click='pause()', ng-disabled='!running')
-								| pause
-							button#stop(ng-click='stop()', ng-disabled='!(running || paused)')
-								| stop
-							button#restart(ng-click='restart()', ng-disabled='notRunningOrPaused()')
-								| restart
-							button#snooze(ng-click='snooze()')
-								| snooze
+						.row.buttons
+							.col-sm-3
+								button.btn.btn-default#pause(ng-click='pause()', ng-disabled='!running')
+									| pause
+							.col-sm-3
+								button.btn.btn-default#stop(ng-click='stop()', ng-disabled='!(running || paused)')
+									| stop
+							.col-sm-3
+								button.btn.btn-default#restart(ng-click='restart()', ng-disabled='notRunningOrPaused()')
+									| restart
+							.col-sm-3
+								button.btn.btn-default#snooze(ng-click='snooze()')
+									| snooze
 						p
 							input#notification(type='checkbox', ng-model='notification', ng-disabled='notificationDenied')
 							label(for='notification') notification
