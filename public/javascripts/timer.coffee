@@ -149,7 +149,7 @@ timer.controller "indexController", ["$scope", ($scope) ->
 			if ts.value >= 0 or ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
 				if $scope.notification
 					$scope.notificationInstance = new Notification "Time is up!",
-						icon: "../images/favicon.ico"
+						icon: "../../images/notification.png"
 				if $scope.sound
 					audio = new Audio "../images/bell.mp3"
 					audio.play()
