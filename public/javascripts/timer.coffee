@@ -8,8 +8,8 @@ timer.controller "indexController", ["$scope", ($scope) ->
 	$scope.initialSeconds = 0
 
 	$scope.hours = 0
-	$scope.minutes = 0
-	$scope.seconds = 5
+	$scope.minutes = 20
+	$scope.seconds = 0
 
 	$scope.running = false
 	$scope.paused = false

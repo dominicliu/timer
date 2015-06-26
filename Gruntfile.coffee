@@ -17,7 +17,7 @@ module.exports = (grunt) ->
 				flatten: true,
 				cwd: "#{__dirname}/public/javascripts",
 				src: ['*.coffee'],
-				dest: 'public/javascripts',
+				dest: 'public/javascripts/compiled',
 				ext: '.js'
 				options:
 					bare: true
@@ -28,10 +28,11 @@ module.exports = (grunt) ->
 		less:
 			compile:
 				files:
-					"public/stylesheets/css/timer.css": "<%= dirs.less %>/timer.less"
+					"public/stylesheets/css/compiled/timer.css": "<%= dirs.less %>/timer.less"
 				options:
 					cleancss: true
 
 	grunt.loadNpmTasks "grunt-contrib-coffee"
 	grunt.loadNpmTasks "grunt-contrib-watch"
 	grunt.loadNpmTasks "grunt-contrib-less"
+	grunt.registerTask "build", ["coffee:compile", "less:compile"]

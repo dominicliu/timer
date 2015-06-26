@@ -74,17 +74,23 @@ body {
 	}
 
 	main {
-		margin: 200px 0;
+		margin: 20px 0;
+		@media(min-width: 768px) {
+			margin: 200px 0;
+		}
 		background-color: @white;
 		padding: 70px;
 
 		img#logo {
 			max-width: 89px;
+			margin-bottom: 40px;
 		}
 
 		#right {
-			border-left: 2px solid @coffee-light;
-			padding-left: 70px;
+			@media(min-width: 1200px) {
+				border-left: 2px solid @coffee-light;
+				padding-left: 70px;
+			}
 		}
 
 		#times {
@@ -235,6 +241,11 @@ body {
 
 		input.edit-time {
 			width: 70px;
+			display: inline;
+			&:focus {
+				border-color: @orange;
+				box-shadow: 0 0 8px fade(@orange, 60%);
+			}
 		}
 	}
 }

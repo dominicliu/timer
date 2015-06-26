@@ -36,3 +36,6 @@ chrome.pem
 
 *.sublime-project
 *.sublime-workspace
+
+public/javascripts/compiled
+public/stylesheets/css/compiled
