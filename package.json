@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "coffee ./bin/www.coffee",
-    "postinstall": "bower install"
+    "postinstall": "bower install && grunt build"
   },
   "dependencies": {
     "async": "^0.9.0",

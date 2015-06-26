@@ -8,8 +8,8 @@ timer.controller "indexController", ["$scope", ($scope) ->
 	$scope.initialSeconds = 0
 
 	$scope.hours = 0
-	$scope.minutes = 0
-	$scope.seconds = 5
+	$scope.minutes = 20
+	$scope.seconds = 0
 
 	$scope.running = false
 	$scope.paused = false
@@ -149,7 +149,7 @@ timer.controller "indexController", ["$scope", ($scope) ->
 			if ts.value >= 0 or ts.hours is 0 and ts.minutes is 0 and ts.seconds is 0
 				if $scope.notification
 					$scope.notificationInstance = new Notification "Time is up!",
-						icon: "../images/favicon.ico"
+						icon: "../../images/notification.png"
 				if $scope.sound
 					audio = new Audio "../images/bell.mp3"
 					audio.play()
